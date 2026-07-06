@@ -7,3 +7,6 @@ __pycache__/
 .idea/
 .vscode/
 node_modules/
+# 不提交未混淆源码 / 构建产物
+app.js
+obfuscate.js

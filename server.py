@@ -41,27 +41,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # quieter logging
         sys.stderr.write("[%s] %s\n" % (self.command, self.path))
 
-    # ---------- static ----------
+    # ---------- API proxy (no static files — front-end is hosted on Cloudflare Pages) ----------
     def do_GET(self):
-        path = self.path.split('?')[0]
-        if path == '/':
-            path = '/index.html'
-        # never serve this script or test files
-        if path.endswith('.py'):
-            self.send_error(404)
-            return
-        fpath = os.path.normpath(os.path.join(ROOT, path.lstrip('/')))
-        if not fpath.startswith(ROOT) or not os.path.isfile(fpath):
-            self.send_error(404)
-            return
-        ext = os.path.splitext(fpath)[1].lower()
-        with open(fpath, 'rb') as f:
-            data = f.read()
-        self.send_response(200)
-        self.send_header('Content-Type', MIME.get(ext, 'application/octet-stream'))
-        self.send_header('Content-Length', str(len(data)))
-        self.end_headers()
-        self.wfile.write(data)
+        # HF 端只作为后端代理，不服务任何静态文件
+        self.send_error(404)
+        return
 
     # ---------- API proxy ----------
     def do_POST(self):
