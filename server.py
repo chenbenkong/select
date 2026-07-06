@@ -17,8 +17,8 @@ import sys
 
 API_URL = "https://apihub.agnes-ai.com/v1/chat/completions"
 API_KEY = os.environ.get("AGNES_API_KEY", "")
-# 本地默认 8765，Hugging Face Spaces 用 7860（由 HF 自动设置 PORT 环境变量）
-PORT = int(os.environ.get("PORT", sys.argv[1] if len(sys.argv) > 1 else 8765))
+# HF Spaces 会自动注入 PORT=7860（来自 README.md 的 app_port）
+PORT = int(os.environ.get("PORT") or 7860)
 HOST = os.environ.get("HOST", "0.0.0.0")
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -143,14 +143,14 @@ class Server(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 if __name__ == '__main__':
     if not API_KEY:
-        print("⚠  警告：AGNES_API_KEY 环境变量未设置，/api/chat 将无法工作。")
+        print("⚠  警告：AGNES_API_KEY 环境变量未设置，/api/chat 将无法工作。", flush=True)
     srv = Server((HOST, PORT), Handler)
-    print(f"抉择·庭审记录 服务已启动")
-    print(f"  监听地址: http://{HOST}:{PORT}/")
-    print(f"  代理端点: http://{HOST}:{PORT}/api/chat  →  {API_URL}")
-    print(f"  按 Ctrl+C 停止")
+    print(f"抉择·庭审记录 服务已启动", flush=True)
+    print(f"  监听地址: http://{HOST}:{PORT}/", flush=True)
+    print(f"  代理端点: http://{HOST}:{PORT}/api/chat  →  {API_URL}", flush=True)
+    print(f"  按 Ctrl+C 停止", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
-        print("\n已停止")
+        print("\n已停止", flush=True)
         srv.shutdown()
