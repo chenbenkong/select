@@ -17,6 +17,7 @@ import sys
 
 API_URL = "https://apihub.agnes-ai.com/v1/chat/completions"
 API_KEY = os.environ.get("AGNES_API_KEY", "")
+# 本地默认 8765，Hugging Face Spaces 用 7860（由 HF 自动设置 PORT 环境变量）
 PORT = int(os.environ.get("PORT", sys.argv[1] if len(sys.argv) > 1 else 8765))
 HOST = os.environ.get("HOST", "0.0.0.0")
 ROOT = os.path.dirname(os.path.abspath(__file__))
