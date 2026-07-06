@@ -1,0 +1,3148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抉择 · 庭审记录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0D0B;
+    --bg-2:#15130F;
+    --surface:#1A1814;
+    --border:#2A2620;
+    --border-soft:#221F1A;
+    --ink:#EDE5D2;
+    --ink-dim:#B8AE96;
+    --muted:#7A7264;
+    --muted-2:#524B40;
+    --gold:#C9A86A;
+    --gold-bright:#E2BE80;
+    --gold-deep:#8A7344;
+    --steel:#6B8FB5;
+    --steel-bright:#92B4D6;
+    --j-rational:#6B8FB5;
+    --j-bestie:#D4886F;
+    --j-realist:#9BB05C;
+    --pro:#C9A86A;
+    --con:#6B8FB5;
+    --jury-1:#9BB05C;
+    --jury-2:#D4886F;
+    --jury-3:#C97A8A;
+    --jury-4:#8FA8B5;
+    --jury-5:#D4A55C;
+    --judge:#C9A86A;
+    --crimson:#A85A4A;
+    --serif:'Fraunces','Spectral',Georgia,serif;
+    --body:'Spectral',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+
+  /* grain overlay */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:.035;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode:overlay;
+  }
+  /* vignette */
+  body::after{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:1;
+    background:radial-gradient(ellipse at 50% 0%, rgba(201,168,106,.06), transparent 55%),
+               radial-gradient(ellipse at 50% 100%, rgba(0,0,0,.5), transparent 60%);
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    max-width:1240px;
+    margin:0 auto;
+    padding:48px 40px 120px;
+  }
+
+  /* ===== HEADER ===== */
+  header.masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    border-bottom:1px solid var(--border);
+    padding-bottom:22px;
+    margin-bottom:64px;
+    animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .mast-left{display:flex;flex-direction:column;gap:6px}
+  .case-no{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.22em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .case-no span{color:var(--gold)}
+  .mast-date{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    text-align:right;
+    line-height:1.8;
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    margin-bottom:72px;
+    animation:fadeUp 1s cubic-bezier(.2,.7,.2,1) .1s both;
+  }
+  .hero-eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.3em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:24px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .hero-eyebrow::before{
+    content:"";display:inline-block;
+    width:42px;height:1px;background:var(--gold);
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;
+    font-size:clamp(56px,9vw,128px);
+    line-height:.92;
+    letter-spacing:-.02em;
+    color:var(--ink);
+    margin-bottom:28px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--gold);
+    font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;
+  }
+  .hero h1 .slash{
+    color:var(--muted-2);
+    font-weight:300;
+    margin:0 .12em;
+  }
+  .hero-sub{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-size:22px;
+    line-height:1.5;
+    color:var(--ink-dim);
+    max-width:640px;
+    font-variation-settings:"opsz" 24,"SOFT" 50;
+  }
+  .hero-sub strong{color:var(--gold-bright);font-weight:500;font-style:normal;font-family:var(--mono);font-size:14px;letter-spacing:.05em}
+
+  /* hero top row (eyebrow + archive link) */
+  .hero-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:24px;
+  }
+  .hero-top .hero-eyebrow{margin-bottom:0}
+  .archive-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 16px;
+    border:1px solid var(--border);
+    background:rgba(201,168,106,.04);
+    color:var(--ink-dim);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .25s ease;
+    text-decoration:none;
+  }
+  .archive-link:hover{
+    border-color:var(--gold);
+    color:var(--gold);
+    background:rgba(201,168,106,.08);
+  }
+  .archive-icon{font-size:14px;line-height:1}
+  .archive-count{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:18px;
+    height:18px;
+    padding:0 5px;
+    border-radius:9px;
+    background:var(--gold);
+    color:var(--bg);
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:0;
+  }
+
+  /* ===== ARCHIVE ===== */
+  .archive-layout{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:24px;
+    min-height:520px;
+  }
+  .archive-list-wrap{
+    background:var(--bg-2);
+    border:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .archive-toolbar{
+    padding:18px 22px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .archive-list-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .archive-clear{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--crimson);
+    cursor:pointer;
+    opacity:.7;
+    transition:opacity .2s;
+  }
+  .archive-clear:hover{opacity:1}
+  .archive-clear[hidden]{display:none}
+
+  .archive-list{
+    flex:1;
+    overflow-y:auto;
+    max-height:640px;
+  }
+  .archive-item{
+    padding:18px 22px;
+    border-bottom:1px solid var(--border-soft);
+    cursor:pointer;
+    transition:background .2s;
+    position:relative;
+  }
+  .archive-item:hover{background:rgba(201,168,106,.04)}
+  .archive-item.active{
+    background:rgba(201,168,106,.10);
+    border-left:2px solid var(--gold);
+    padding-left:20px;
+  }
+  .archive-item-date{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .archive-item-dilemma{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:15px;
+    line-height:1.45;
+    color:var(--ink);
+    margin-bottom:10px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .archive-item-ruling{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:13px;
+  }
+  .archive-ruling-dot{
+    width:6px;height:6px;border-radius:50%;display:inline-block;
+  }
+  .archive-ruling-do .archive-ruling-dot{background:var(--gold)}
+  .archive-ruling-dont .archive-ruling-dot{background:var(--con)}
+  .archive-ruling-do{color:var(--gold-bright)}
+  .archive-ruling-dont{color:var(--steel-bright)}
+
+  .archive-item-del{
+    position:absolute;
+    top:14px;right:14px;
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    color:var(--muted-2);
+    font-size:16px;
+    line-height:1;
+    opacity:0;
+    transition:all .2s;
+    cursor:pointer;
+    background:transparent;
+  }
+  .archive-item:hover .archive-item-del{opacity:1}
+  .archive-item-del:hover{
+    background:var(--crimson);
+    color:#fff;
+    opacity:1;
+  }
+
+  .archive-list-empty{
+    padding:60px 22px;
+    text-align:center;
+    color:var(--muted-2);
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    line-height:1.6;
+  }
+  .archive-list-empty-mark{
+    font-size:28px;
+    margin-bottom:14px;
+    opacity:.5;
+  }
+
+  .archive-detail{
+    background:var(--bg-2);
+    border:1px solid var(--border);
+    padding:36px 40px;
+    overflow-y:auto;
+    max-height:720px;
+  }
+  .archive-empty{
+    height:100%;
+    min-height:400px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:var(--muted-2);
+  }
+  .archive-empty-mark{
+    font-size:48px;
+    opacity:.35;
+    margin-bottom:18px;
+  }
+  .archive-empty-text{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:15px;
+  }
+
+  /* archive detail — reuses speaker/judge styles */
+  .archive-case{
+    margin-bottom:28px;
+    padding-bottom:24px;
+    border-bottom:1px solid var(--border);
+  }
+  .archive-case-meta{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.22em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .archive-case-dilemma{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 60;
+    font-size:22px;
+    line-height:1.4;
+    color:var(--ink);
+    margin-bottom:14px;
+  }
+  .archive-case-ruling{
+    display:inline-block;
+    padding:6px 14px;
+    border:1px solid;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    letter-spacing:.05em;
+  }
+  .archive-case-ruling.do{border-color:var(--gold);color:var(--gold)}
+  .archive-case-ruling.dont{border-color:var(--con);color:var(--steel-bright)}
+
+  .archive-section-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.22em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin:32px 0 16px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .archive-section-title:first-of-type{margin-top:0}
+
+  .archive-debate{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-bottom:8px;
+  }
+  .archive-debate-col{
+    background:var(--bg);
+    border:1px solid var(--border-soft);
+    padding:18px 20px;
+  }
+  .archive-debate-col:first-child{border-left:2px solid var(--pro)}
+  .archive-debate-col:last-child{border-left:2px solid var(--con)}
+  .archive-debate-head{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    margin-bottom:12px;
+    padding-bottom:10px;
+    border-bottom:1px dashed var(--border-soft);
+  }
+  .archive-debate-head.pro{color:var(--pro)}
+  .archive-debate-head.con{color:var(--con)}
+  .archive-debate-body{
+    font-family:var(--body);
+    font-size:14.5px;
+    line-height:1.7;
+    color:var(--ink-dim);
+  }
+  .archive-debate-body p{margin-bottom:10px}
+  .archive-debate-body p:last-child{margin-bottom:0}
+
+  .archive-jurors{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  .archive-juror{
+    background:var(--bg);
+    border:1px solid var(--border-soft);
+    padding:14px 18px;
+  }
+  .archive-juror-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:8px;
+    padding-bottom:8px;
+    border-bottom:1px dashed var(--border-soft);
+  }
+  .archive-juror-name{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:14.5px;
+  }
+  .archive-juror-lean{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:12.5px;
+  }
+  .archive-juror-lean.do{color:var(--gold-bright)}
+  .archive-juror-lean.dont{color:var(--steel-bright)}
+  .archive-juror-body{
+    font-family:var(--body);
+    font-size:13.5px;
+    line-height:1.65;
+    color:var(--ink-dim);
+  }
+  .archive-juror-body p{margin-bottom:8px}
+  .archive-juror-body p:last-child{margin-bottom:0}
+
+  .archive-judge{
+    font-family:var(--body);
+    font-size:15px;
+    line-height:1.8;
+    color:var(--ink-dim);
+    margin-bottom:18px;
+  }
+  .archive-judge p{margin-bottom:10px}
+  .archive-judge p:last-child{margin-bottom:0}
+  .archive-judge-ruling{
+    padding:14px 20px;
+    background:rgba(201,168,106,.06);
+    border-left:3px solid var(--gold);
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:16px;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  .archive-judge-ruling.dont{
+    background:rgba(107,143,181,.06);
+    border-left-color:var(--con);
+  }
+  .archive-judge-ruling .verb{color:var(--gold);font-weight:500}
+  .archive-judge-ruling.dont .verb{color:var(--steel-bright)}
+
+  /* ===== SECTION ===== */
+  section{margin-bottom:88px;position:relative}
+  .sec-head{
+    display:flex;
+    align-items:baseline;
+    gap:18px;
+    margin-bottom:36px;
+    padding-bottom:14px;
+    border-bottom:1px dashed var(--border);
+  }
+  .sec-num{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--gold);
+    letter-spacing:.2em;
+  }
+  .sec-title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 60,"WONK" 0;
+    font-size:30px;
+    letter-spacing:-.01em;
+    color:var(--ink);
+  }
+  .sec-title em{font-style:italic;color:var(--gold)}
+  .sec-meta{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+  }
+
+  /* ===== INPUT (CASE FILE) ===== */
+  .casefile{
+    display:block;
+    border:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(26,24,20,.6), rgba(21,19,15,.4));
+  }
+  .option-col{
+    padding:32px 30px 36px;
+    position:relative;
+  }
+  .opt-tag{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .opt-letter{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;
+    font-size:42px;
+    line-height:1;
+    font-style:italic;
+  }
+  .opt-col-a .opt-letter{color:var(--gold)}
+  .opt-col-b .opt-letter{color:var(--steel-bright)}
+  .opt-label{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.22em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .opt-input{
+    width:100%;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--border);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 30,"SOFT" 40;
+    font-size:24px;
+    line-height:1.35;
+    padding:8px 0 14px;
+    outline:none;
+    transition:border-color .3s;
+  }
+  .opt-input::placeholder{color:var(--muted-2);font-style:italic}
+  .opt-input:focus{border-bottom-color:var(--gold)}
+  .opt-col-b .opt-input:focus{border-bottom-color:var(--steel-bright)}
+
+  .dim-grid{
+    margin-top:26px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .dim-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:8px 14px;
+    align-items:center;
+  }
+  .dim-name{
+    font-family:var(--body);
+    font-size:14px;
+    color:var(--ink-dim);
+    letter-spacing:.01em;
+  }
+  .dim-name .dim-en{
+    display:block;
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+  .dim-val{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--gold);
+    font-weight:500;
+    min-width:28px;
+    text-align:right;
+    font-variation-numeric:tabular-nums;
+  }
+  .opt-col-b .dim-val{color:var(--steel-bright)}
+  .dim-slider{
+    grid-column:1 / -1;
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:18px;
+    background:transparent;
+    cursor:pointer;
+    margin-top:-4px;
+  }
+  .dim-slider::-webkit-slider-runnable-track{
+    height:2px;
+    background:linear-gradient(90deg, var(--gold) var(--p,50%), var(--border) var(--p,50%));
+    border-radius:0;
+  }
+  .opt-col-b .dim-slider::-webkit-slider-runnable-track{
+    background:linear-gradient(90deg, var(--steel-bright) var(--p,50%), var(--border) var(--p,50%));
+  }
+  .dim-slider::-moz-range-track{
+    height:2px;background:var(--border);
+  }
+  .dim-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;height:14px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--gold);
+    margin-top:-6px;
+    cursor:grab;
+    transition:transform .2s, border-color .2s;
+  }
+  .opt-col-b .dim-slider::-webkit-slider-thumb{border-color:var(--steel-bright)}
+  .dim-slider::-webkit-slider-thumb:hover{transform:scale(1.25)}
+  .dim-slider:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.15)}
+  .dim-slider::-moz-range-thumb{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--gold);cursor:grab;
+  }
+
+  .casefile-foot{
+    grid-column:1 / -1;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 30px;
+    border-top:1px solid var(--border);
+    background:rgba(14,13,11,.5);
+  }
+
+  /* single-input variant */
+  .casefile.single{display:block}
+  .casefile.single .single-wrap{padding:36px 38px 30px}
+  .casefile.single .casefile-foot{border-top:1px solid var(--border)}
+  .single-input{
+    width:100%;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--border);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 30,"SOFT" 40;
+    font-size:26px;
+    line-height:1.4;
+    padding:10px 0 18px;
+    outline:none;
+    resize:none;
+    transition:border-color .3s;
+    min-height:90px;
+  }
+  .single-input::placeholder{color:var(--muted-2);font-style:italic;font-size:20px}
+  .single-input:focus{border-bottom-color:var(--gold)}
+  .single-hint{
+    margin-top:18px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.04em;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  .single-hint em{font-weight:500}
+
+  /* deliberation (loading) */
+  .delib{
+    display:flex;
+    align-items:center;
+    gap:28px;
+    padding:48px 40px;
+    border:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(26,24,20,.6), rgba(21,19,15,.4));
+    animation:fadeUp .6s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .delib-seal{flex-shrink:0}
+  .delib-svg{width:64px;height:64px}
+  .delib-spin{
+    transform-origin:30px 30px;
+    animation:spin 1.6s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .delib-eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.28em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .delib-main{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 60,"WONK" 1;
+    font-size:28px;
+    color:var(--ink);
+    margin-bottom:6px;
+    line-height:1.2;
+  }
+  .delib-sub{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:15px;
+    color:var(--muted);
+    min-height:22px;
+    transition:opacity .3s;
+  }
+  .delib-sub.fade{opacity:0}
+  .foot-note{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .foot-note em{font-style:normal;color:var(--gold)}
+
+  .gavel-btn{
+    appearance:none;
+    border:none;
+    background:var(--gold);
+    color:var(--bg);
+    font-family:var(--serif);
+    font-weight:500;
+    font-variation-settings:"opsz" 30,"SOFT" 40;
+    font-size:18px;
+    letter-spacing:.04em;
+    padding:14px 36px 14px 32px;
+    cursor:pointer;
+    position:relative;
+    transition:background .25s, transform .15s, letter-spacing .25s;
+    display:flex;align-items:center;gap:14px;
+  }
+  .gavel-btn::after{
+    content:"→";
+    font-family:var(--mono);
+    font-size:16px;
+    transition:transform .25s;
+  }
+  .gavel-btn:hover{background:var(--gold-bright);letter-spacing:.08em}
+  .gavel-btn:hover::after{transform:translateX(4px)}
+  .gavel-btn:active{transform:translateY(1px)}
+  .gavel-btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* ===== COURTROOM ===== */
+  /* shared speaker card (used by counsel + jurors + judge) */
+  .speaker{
+    background:var(--bg-2);
+    padding:28px 26px 26px;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    opacity:0;
+    transform:translateY(20px);
+    border:1px solid var(--border);
+  }
+  .speaker.reveal{
+    animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .speaker-seat{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.22em;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .seat-dot{
+    width:7px;height:7px;border-radius:50%;
+    display:inline-block;
+  }
+  .speaker-name{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 1;
+    font-size:24px;
+    line-height:1.15;
+    margin-bottom:4px;
+  }
+  .speaker-role{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .speaker-speech{
+    font-family:var(--body);
+    font-size:15.5px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    flex:1;
+  }
+  .speaker-speech p{margin-bottom:10px}
+  .speaker-speech p:last-child{margin-bottom:0}
+  .speaker-speech .quote-mark{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--muted-2);
+    font-size:20px;
+  }
+  .speaker-foot{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px dashed var(--border-soft);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .sf-label{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .sf-lean{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:500;
+    font-size:17px;
+  }
+
+  /* color theming */
+  .speaker[data-role="pro"]{border-left:3px solid var(--pro)}
+  .speaker[data-role="con"]{border-left:3px solid var(--con)}
+  .speaker[data-role="jury"]{border-left:3px solid var(--border)}
+  .speaker[data-role="judge"]{border-left:3px solid var(--judge)}
+  .speaker[data-role="pro"] .seat-dot,
+  .speaker[data-role="pro"] .speaker-name,
+  .speaker[data-role="pro"] .sf-lean{color:var(--pro)}
+  .speaker[data-role="con"] .seat-dot,
+  .speaker[data-role="con"] .speaker-name,
+  .speaker[data-role="con"] .sf-lean{color:var(--con)}
+  .speaker[data-jury="1"] .seat-dot,
+  .speaker[data-jury="1"] .speaker-name,
+  .speaker[data-jury="1"] .sf-lean{color:var(--jury-1)}
+  .speaker[data-jury="2"] .seat-dot,
+  .speaker[data-jury="2"] .speaker-name,
+  .speaker[data-jury="2"] .sf-lean{color:var(--jury-2)}
+  .speaker[data-jury="3"] .seat-dot,
+  .speaker[data-jury="3"] .speaker-name,
+  .speaker[data-jury="3"] .sf-lean{color:var(--jury-3)}
+  .speaker[data-jury="4"] .seat-dot,
+  .speaker[data-jury="4"] .speaker-name,
+  .speaker[data-jury="4"] .sf-lean{color:var(--jury-4)}
+  .speaker[data-jury="5"] .seat-dot,
+  .speaker[data-jury="5"] .speaker-name,
+  .speaker[data-jury="5"] .sf-lean{color:var(--jury-5)}
+  .speaker[data-role="judge"] .seat-dot,
+  .speaker[data-role="judge"] .speaker-name{color:var(--judge)}
+
+  /* ---- counsel table (pro vs con) ---- */
+  .counsel-table{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+    margin-bottom:36px;
+    position:relative;
+  }
+  .counsel-vs{
+    position:absolute;
+    left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;
+    font-size:28px;
+    color:var(--muted-2);
+    background:var(--bg);
+    padding:6px 14px;
+    z-index:2;
+    letter-spacing:.05em;
+  }
+
+  /* ---- jury box (5 seats) ---- */
+  .jury-box{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:18px;
+    margin-bottom:36px;
+  }
+  .jury-box .speaker{padding:24px 20px 22px;min-height:auto}
+  .jury-box .speaker-name{font-size:19px}
+  .jury-box .speaker-role{font-size:12px;margin-bottom:14px;padding-bottom:12px}
+  .jury-box .speaker-speech{font-size:14.5px;line-height:1.65}
+
+  /* ---- judge's bench ---- */
+  .judge-bench{
+    border:1px solid var(--border);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201,168,106,.08), transparent 60%),
+      linear-gradient(180deg, rgba(26,24,20,.7), rgba(14,13,11,.5));
+    padding:40px 44px 38px;
+    position:relative;
+    overflow:hidden;
+  }
+  .judge-bench::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .judge-court-name{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.28em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .judge-title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 1;
+    font-size:26px;
+    color:var(--ink);
+    margin-bottom:24px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  .judge-title em{font-style:italic;color:var(--gold)}
+  .judge-body{
+    font-family:var(--body);
+    font-size:16.5px;
+    line-height:1.8;
+    color:var(--ink-dim);
+  }
+  .judge-body p{margin-bottom:14px}
+  .judge-body p:last-child{margin-bottom:0}
+  .judge-body .h-lead{
+    font-family:var(--serif);
+    font-weight:400;
+    color:var(--ink);
+    font-size:18px;
+    margin-top:18px;
+    margin-bottom:8px;
+  }
+  .judge-body .h-lead:first-child{margin-top:0}
+  .judge-body .q{
+    color:var(--gold-bright);
+    font-style:italic;
+  }
+  .judge-ruling{
+    margin-top:28px;
+    padding:22px 26px;
+    background:rgba(201,168,106,.06);
+    border-left:3px solid var(--gold);
+    font-family:var(--serif);
+    font-weight:400;
+    font-variation-settings:"opsz" 60,"SOFT" 60;
+    font-size:22px;
+    line-height:1.4;
+    color:var(--ink);
+  }
+  .judge-ruling .verb{
+    font-style:italic;
+    color:var(--gold);
+    font-weight:500;
+  }
+  .judge-sig{
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px dashed var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+  }
+  .judge-sig em{font-style:italic;color:var(--muted);font-family:var(--serif);font-size:13px;letter-spacing:.02em;text-transform:none}
+
+  /* ===== VERDICT ===== */
+  .verdict-card{
+    border:1px solid var(--border);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201,168,106,.08), transparent 60%),
+      linear-gradient(180deg, rgba(26,24,20,.7), rgba(14,13,11,.5));
+    padding:54px 56px 50px;
+    position:relative;
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(24px);
+  }
+  .verdict-card.show{
+    animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .verdict-card::before{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .verdict-eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.28em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .verdict-main{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;
+    font-size:clamp(40px,6vw,72px);
+    line-height:1.02;
+    letter-spacing:-.02em;
+    margin-bottom:20px;
+  }
+  .verdict-main em{
+    font-style:italic;
+    font-weight:400;
+  }
+  .verdict-main .chosen-A{color:var(--gold)}
+  .verdict-main .chosen-B{color:var(--steel-bright)}
+  .verdict-confidence{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:32px;
+    padding-bottom:28px;
+    border-bottom:1px dashed var(--border);
+  }
+  .vc-label{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .vc-bar{
+    flex:1;
+    height:3px;
+    background:var(--border);
+    position:relative;
+    max-width:280px;
+  }
+  .vc-fill{
+    position:absolute;left:0;top:0;bottom:0;
+    background:var(--gold);
+    width:0;
+    transition:width 1.2s cubic-bezier(.2,.7,.2,1) .3s;
+  }
+  .vc-pct{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--gold);
+    font-weight:500;
+  }
+  .verdict-reason{
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    max-width:760px;
+  }
+  .verdict-reason p{margin-bottom:14px}
+  .verdict-reason p:last-child{margin-bottom:0}
+  .verdict-reason .hl{color:var(--gold-bright);font-weight:500}
+
+  .verdict-foot{
+    margin-top:36px;
+    padding-top:24px;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+  }
+  .verdict-foot a{
+    color:var(--gold);
+    text-decoration:none;
+    cursor:pointer;
+    transition:color .2s;
+  }
+  .verdict-foot a:hover{color:var(--gold-bright)}
+
+  /* empty state for hidden sections */
+  .hidden{display:none !important}
+
+  /* footer */
+  footer.colophon{
+    margin-top:100px;
+    padding-top:28px;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+  }
+  footer.colophon em{font-style:normal;color:var(--muted)}
+
+  /* animations */
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @keyframes blink{
+    0%,100%{opacity:1}
+    50%{opacity:0}
+  }
+  .typing::after{
+    content:"▌";
+    color:var(--gold);
+    animation:blink 1s infinite;
+    margin-left:2px;
+  }
+
+  /* responsive */
+  @media (max-width:900px){
+    .wrap{padding:32px 22px 80px}
+    header.masthead{flex-direction:column;gap:12px}
+    .mast-date{text-align:left}
+    .casefile{grid-template-columns:1fr}
+    .casefile::before{display:none}
+    .casefile .option-col{border-bottom:1px solid var(--border)}
+    .jury-box{grid-template-columns:repeat(2,1fr)}
+    .counsel-table{grid-template-columns:1fr}
+    .counsel-vs{top:50%}
+    .verdict-card{padding:36px 28px}
+    .judge-bench{padding:32px 24px}
+    .casefile-foot{flex-direction:column;gap:18px;align-items:stretch}
+    .gavel-btn{justify-content:center}
+    .dim-row{grid-template-columns:1fr auto}
+    .archive-layout{grid-template-columns:1fr}
+    .archive-debate{grid-template-columns:1fr}
+    .archive-jurors{grid-template-columns:1fr}
+    .hero-top{flex-direction:column;align-items:flex-start;gap:16px}
+    .modal-card{padding:32px 24px 22px}
+  }
+
+  /* 确认弹窗 · 与庭审系统视觉一致 */
+  .modal-mask{
+    position:fixed;inset:0;
+    background:rgba(8,7,5,0.72);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .modal-mask.show{opacity:1;pointer-events:auto}
+  .modal-card{
+    background:linear-gradient(180deg,#1A1814 0%,#13110D 100%);
+    border:1px solid rgba(201,168,106,0.22);
+    border-radius:3px;
+    padding:40px 44px 28px;
+    max-width:440px;width:calc(100% - 48px);
+    box-shadow:0 30px 80px rgba(0,0,0,0.7),
+               0 0 0 1px rgba(201,168,106,0.06),
+               inset 0 1px 0 rgba(255,255,255,0.03);
+    transform:scale(0.96) translateY(8px);
+    transition:transform .28s cubic-bezier(0.2,0.8,0.3,1);
+    position:relative;
+  }
+  .modal-mask.show .modal-card{transform:scale(1) translateY(0)}
+  .modal-card::before{
+    content:"";position:absolute;top:0;left:28px;right:28px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:0.55;
+  }
+  .modal-card::after{
+    content:"";position:absolute;bottom:0;left:28px;right:28px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold-deep),transparent);
+    opacity:0.4;
+  }
+  .modal-mark{
+    text-align:center;
+    font-family:var(--serif);
+    font-size:32px;
+    color:var(--gold);
+    margin-bottom:14px;
+    font-weight:300;
+    letter-spacing:0.05em;
+    line-height:1;
+  }
+  .modal-title{
+    font-family:var(--serif);
+    font-size:19px;
+    font-weight:500;
+    color:var(--ink);
+    text-align:center;
+    margin-bottom:12px;
+    letter-spacing:0.06em;
+  }
+  .modal-text{
+    font-family:var(--body);
+    font-size:14px;
+    color:var(--ink-dim);
+    text-align:center;
+    line-height:1.8;
+    margin-bottom:30px;
+    letter-spacing:0.02em;
+  }
+  .modal-actions{
+    display:flex;gap:10px;justify-content:center;
+  }
+  .modal-btn{
+    flex:1;
+    padding:12px 18px;
+    background:transparent;
+    color:var(--ink-dim);
+    border:1px solid var(--border);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .2s ease;
+    border-radius:1px;
+  }
+  .modal-btn:hover{
+    border-color:var(--gold-deep);
+    color:var(--ink);
+    background:rgba(201,168,106,0.04);
+  }
+  .modal-btn:focus{outline:none;border-color:var(--gold);color:var(--ink)}
+  .modal-btn:active{transform:translateY(1px)}
+  .modal-btn.primary{
+    background:linear-gradient(180deg,var(--gold-bright) 0%,var(--gold) 55%,var(--gold-deep) 100%);
+    border-color:var(--gold);
+    color:#0E0D0B;
+    font-weight:600;
+  }
+  .modal-btn.primary:hover{
+    background:linear-gradient(180deg,#EBC890 0%,var(--gold-bright) 55%,var(--gold) 100%);
+    color:#0E0D0B;
+  }
+  .modal-btn.primary.danger{
+    background:linear-gradient(180deg,#C97A6A 0%,var(--crimson) 55%,#7A3F32 100%);
+    border-color:var(--crimson);
+  }
+  .modal-btn.primary.danger:hover{
+    background:linear-gradient(180deg,#D88A7A 0%,#B8654F 55%,var(--crimson) 100%);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="mast-left">
+      <div class="case-no" style="color:var(--muted-2)">选择困难仲裁庭</div>
+    </div>
+    <div class="mast-date" id="mastDate">—</div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-top">
+      <div class="hero-eyebrow">为选择困难者而作</div>
+      <a id="openArchive" class="archive-link">
+        <span class="archive-icon">⚖</span>
+        <span class="archive-text">记录册</span>
+        <span class="archive-count" id="archiveCount" hidden></span>
+      </a>
+    </div>
+    <h1>抉<span class="slash">/</span><em>择</em></h1>
+    <p class="hero-sub">
+      把那件让你辗转的事写下来——只一件。系统会自己把它拆成「去做」与「不做」，
+      正反双方代表先行辩论，五位陪审员各自独立评议，最后由审判长写就裁定书。
+      不是冷冰冰的分数游戏，是一场为你而开的庭审。
+    </p>
+  </section>
+
+  <!-- ARCHIVE · 庭审记录册 -->
+  <section id="archive-section" class="hidden">
+    <div class="sec-head">
+      <span class="sec-num">00 /</span>
+      <h2 class="sec-title">记录册 <em>·</em> 历次庭审</h2>
+      <span class="sec-meta" id="archiveMeta">本地存储</span>
+    </div>
+
+    <div class="archive-layout">
+      <aside class="archive-list-wrap">
+        <div class="archive-toolbar">
+          <span class="archive-list-title" id="archiveListTitle">—</span>
+          <a id="clearAllBtn" class="archive-clear">清空全部</a>
+        </div>
+        <div class="archive-list" id="archiveList">
+          <!-- 列表项由 JS 注入 -->
+        </div>
+      </aside>
+      <main class="archive-detail" id="archiveDetail">
+        <div class="archive-empty">
+          <div class="archive-empty-mark">⚖</div>
+          <div class="archive-empty-text">选择左侧的庭审记录以查阅</div>
+        </div>
+      </main>
+    </div>
+
+    <div style="margin-top:32px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted-2);text-transform:uppercase">记录保存于本机浏览器 · 清除浏览器数据将一并消失</span>
+      <a id="backToHome" style="color:var(--gold);cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em">← 返回立案</a>
+    </div>
+  </section>
+
+  <!-- 01 · CASE FILE -->
+  <section id="input-section">
+    <div class="sec-head">
+      <span class="sec-num">01 /</span>
+      <h2 class="sec-title">立案 <em>·</em> 把那件事说出来</h2>
+      <span class="sec-meta">单栏呈堂</span>
+    </div>
+
+    <div class="casefile single">
+      <div class="single-wrap">
+        <div class="opt-tag">
+          <span class="opt-letter" style="font-style:normal;color:var(--gold)">案</span>
+          <span class="opt-label">陈述 · 你在纠结的那一件事</span>
+        </div>
+        <textarea class="opt-input single-input" id="dilemmaInput" rows="3" maxlength="160"
+          placeholder="例如：要不要辞掉体制内工作去创业 / 该不该和谈了五年的对象分手 / 要不要接受那个外派机会"></textarea>
+        <div class="single-hint">
+          <span>系统会自己把它拆成「<em style="color:var(--gold);font-style:normal">去做</em>」与「<em style="color:var(--steel-bright);font-style:normal">不做</em>」两个方向，并从五个维度打分</span>
+        </div>
+      </div>
+      <div class="casefile-foot">
+        <div class="foot-note">越具体越好 · 别只写两个字</div>
+        <button class="gavel-btn" id="gavelBtn">开庭</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIBERATION (loading) -->
+  <section id="delib-section" class="hidden">
+    <div class="delib">
+      <div class="delib-seal">
+        <svg viewBox="0 0 60 60" class="delib-svg">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="var(--border)" stroke-width="1"/>
+          <circle cx="30" cy="30" r="26" fill="none" stroke="var(--gold)" stroke-width="1.5"
+                  stroke-dasharray="40 200" stroke-linecap="round" class="delib-spin"/>
+          <text x="30" y="36" text-anchor="middle" font-family="Fraunces,serif" font-size="22"
+                font-style="italic" fill="var(--gold)">择</text>
+        </svg>
+      </div>
+      <div class="delib-text">
+        <div class="delib-eyebrow">合议进行中</div>
+        <div class="delib-main">陪审团正在合议</div>
+        <div class="delib-sub" id="delibSub">正在拆解你的纠结…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · DEBATE (counsel for both sides) -->
+  <section id="debate-section" class="hidden">
+    <div class="sec-head">
+      <span class="sec-num">02 /</span>
+      <h2 class="sec-title">法庭辩论 <em>·</em> 正反双方陈述</h2>
+      <span class="sec-meta">控辩交锋</span>
+    </div>
+    <div class="counsel-table" id="counselTable">
+      <div class="counsel-vs">辩</div>
+      <!-- 正方 / 反方 由 JS 注入 -->
+    </div>
+  </section>
+
+  <!-- 03 · JURY (deliberation) -->
+  <section id="jury-section" class="hidden">
+    <div class="sec-head">
+      <span class="sec-num">03 /</span>
+      <h2 class="sec-title">陪审团评议 <em>·</em> 独立意见</h2>
+      <span class="sec-meta">五人合议</span>
+    </div>
+    <div class="jury-box" id="juryBox"></div>
+  </section>
+
+  <!-- 04 · JUDGE'S RULING -->
+  <section id="verdict-section" class="hidden">
+    <div class="sec-head">
+      <span class="sec-num">04 /</span>
+      <h2 class="sec-title">宣判 <em>·</em> 法官裁定书</h2>
+      <span class="sec-meta">终审裁定</span>
+    </div>
+    <div class="judge-bench" id="judgeBench">
+      <div class="judge-court-name" id="judgeCourtName">抉择仲裁庭 · 第一分庭</div>
+      <div class="judge-title">裁定书 <em>·</em> <span id="judgeCaseNo">案号 —</span></div>
+      <div class="judge-body" id="judgeBody">
+        <p class="h-lead">合议庭组成</p>
+        <p>—</p>
+      </div>
+      <div class="judge-ruling" id="judgeRuling">—</div>
+      <div class="judge-sig">
+        <span>审判长 · 抉择仲裁庭</span>
+        <em id="judgeDate">—</em>
+      </div>
+    </div>
+    <div class="verdict-foot" style="margin-top:24px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted-2);text-transform:uppercase">本庭审记录由 AI 生成 · 仅供自省 · 不具法律效力</span>
+      <a id="resetBtn" style="color:var(--gold);cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em">↻ 重新立案</a>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>抉择 · 庭审记录</span>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   抉择 · 庭审记录
+   一个把纠结拆成雷达图的小工具
+   ============================================================ */
+
+const DIMENSIONS = [
+  { key:'dopamine',  zh:'现在想不想？',     hint:'此刻心动程度' },
+  { key:'longterm',  zh:'三年后值不值？',   hint:'拉长时间看还划算吗' },
+  { key:'friction',  zh:'明天能动手吗？',   hint:'起步有多难' },
+  { key:'intrinsic', zh:'真是为自己吗？',   hint:'真心想做还是被推着走' },
+  { key:'risk',      zh:'翻车扛得住吗？',   hint:'最坏情况能不能接住' },
+  { key:'regret',    zh:'错过了会后悔吗？', hint:'不做会一直惦记吗' },
+];
+
+/* ---------- 庭审角色 ---------- */
+const COUNSEL_PRO = {
+  id:'pro', seat:'正方代表',
+  name:'正方代表 · 逐梦人',
+  role:'主张"去做"',
+};
+const COUNSEL_CON = {
+  id:'con', seat:'反方代表',
+  name:'反方代表 · 守成人',
+  role:'主张"不做"',
+};
+const JURORS = [
+  {
+    id:'jury1', seat:'陪审员 01',
+    name:'陪审员甲 · 长远先生',
+    role:'替三年后的你说话',
+    weights:{ dopamine:0.07, longterm:0.36, friction:0.16, intrinsic:0.15, risk:0.10, regret:0.16 },
+  },
+  {
+    id:'jury2', seat:'陪审员 02',
+    name:'陪审员乙 · 临场女士',
+    role:'看明天能不能落地',
+    weights:{ dopamine:0.15, longterm:0.14, friction:0.36, intrinsic:0.13, risk:0.13, regret:0.09 },
+  },
+  {
+    id:'jury3', seat:'陪审员 03',
+    name:'陪审员丙 · 知心大姐',
+    role:'听你心里那个声音',
+    weights:{ dopamine:0.20, longterm:0.14, friction:0.18, intrinsic:0.24, risk:0.09, regret:0.15 },
+  },
+  {
+    id:'jury4', seat:'陪审员 04',
+    name:'陪审员丁 · 老成先生',
+    role:'见过太多人栽跟头',
+    weights:{ dopamine:0.05, longterm:0.20, friction:0.16, intrinsic:0.09, risk:0.40, regret:0.10 },
+  },
+  {
+    id:'jury5', seat:'陪审员 05',
+    name:'陪审员戊 · 锐气青年',
+    role:'不试怎么知道',
+    weights:{ dopamine:0.28, longterm:0.16, friction:0.16, intrinsic:0.18, risk:0.07, regret:0.15 },
+  },
+];
+const JUDGE = {
+  id:'judge', seat:'审判长',
+  name:'审判长 · 酌',
+  role:'综合双方意见作终审裁定',
+};
+
+const state = {
+  analysis:null,
+};
+
+/* ============================================================
+   AI CLIENT — 调用 agnes API（经本地代理 /api/chat）
+   ============================================================ */
+const AI_MODEL = 'agnes-2.0-flash';
+const AI_MODEL_DEEP = 'agnes-2.0';
+
+async function callAI(messages, { stream=false, onToken=null, model=AI_MODEL, signal=null, maxTokens=700 } = {}){
+  // 用非流式请求拿完整结果，然后前端模拟打字机（避免 SSE 并发连接问题）
+  const body = { model, messages, stream:false, max_tokens: maxTokens };
+  const resp = await fetch('/api/chat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+    signal,
+  });
+  if(!resp.ok){
+    const t = await resp.text().catch(()=> '');
+    throw new Error('API '+resp.status+': '+t.slice(0,200));
+  }
+  const j = await resp.json();
+  const full = j.choices?.[0]?.message?.content || '';
+
+  if(stream && onToken){
+    // 模拟打字机：分块吐字
+    const chunkSize = Math.max(2, Math.round(full.length / 60));
+    let pos = 0;
+    await new Promise(resolve => {
+      function step(){
+        if(pos >= full.length){ resolve(); return; }
+        pos = Math.min(full.length, pos + chunkSize);
+        onToken(full.slice(0, pos), full.slice(0, pos));
+        setTimeout(step, 30);
+      }
+      step();
+    });
+  }
+  return full;
+}
+
+/* ============================================================
+   庭审角色系统提示词
+   8 人：正方代表 / 反方代表 / 5 陪审员 / 法官
+   ============================================================ */
+const COUNSEL_PROMPTS = {
+  pro: `你是"正方代表·逐梦人"，在一场关于"用户该不该做某件事"的庭审中担任正方代理人。你的立场是：主张用户"去做"。
+
+你的职责：像真正的辩护律师一样，为"去做"这一方陈词。必须尽全力为这一方争取，但不得造假、不得回避事实。
+
+【输出格式——严格遵守】
+不要任何结论标记行。直接以"审判长、各位陪审员："开头，写一篇 220-320 字的开庭陈词。
+
+陈词结构：
+1. 开场：明确立场（主张去做），用一句话点出本案核心
+2. 事实陈述：引用用户原话里的具体词句，重构用户处境
+3. 论点：至少给出三个支持"去做"的论据，必须紧扣用户的具体情境（机会成本、长期回报、可逆性、内在动机、当下情绪信号等任选）
+4. 反驳预告：预先回应反方可能提出的最大反对意见
+5. 结论：用一句有力的话收束
+
+铁律：
+- 必须引用用户原话作为证据，像律师引用证词
+- 禁止套话、禁止空喊口号、禁止与用户情境脱节
+- 涉及外部信息（行业、政策、市场等）可基于知识引用，标注"据我所知"
+- 语气是真正的辩护律师：专业、有感染力、为委托人拼尽全力，但保持体面`,
+
+  con: `你是"反方代表·守成人"，在一场关于"用户该不该做某件事"的庭审中担任反方代理人。你的立场是：主张用户"不做"（维持现状）。
+
+你的职责：像真正的辩护律师一样，为"不做"这一方陈词。必须尽全力为这一方争取，但不得造假、不得回避事实。
+
+【输出格式——严格遵守】
+不要任何结论标记行。直接以"审判长、各位陪审员："开头，写一篇 220-320 字的开庭陈词。
+
+陈词结构：
+1. 开场：明确立场（主张不做），用一句话点出本案核心
+2. 事实陈述：引用用户原话里的具体词句，重构用户处境
+3. 论点：至少给出三个支持"不做"的论据，必须紧扣用户的具体情境（下行风险、沉没成本、可逆性缺失、现实约束、外部压力等任选）
+4. 反驳预告：预先回应正方可能提出的最大反对意见
+5. 结论：用一句有力的话收束
+
+铁律：
+- 必须引用用户原话作为证据，像律师引用证词
+- 禁止套话、禁止空喊口号、禁止与用户情境脱节
+- 涉及外部信息（行业、政策、市场等）可基于知识引用，标注"据我所知"
+- 语气是真正的辩护律师：专业、沉稳、为委托人拼尽全力，但保持体面`,
+};
+
+const JUROR_PROMPTS = {
+  jury1: `你是"陪审员甲·长远先生"，庭审的陪审员之一。你的视角：永远站在三年后的用户这边想问题。你不看当下爽不爽，只看长期回报。
+
+【输出格式——严格遵守】
+第一行必须是结论，格式精确为：[结论：去做] 或 [结论：不做]
+第二行起写你的评议意见（120-180字）。
+
+铁律：
+- 第一行的结论标记必须出现
+- 必须引用用户原话里的具体词句
+- 紧扣用户的具体情境，禁止泛泛而谈
+- 你的视角是"三年后回看"——哪个选择在三年后更值钱
+- 语气：老成、克制、像一个真正在算长期账的人`,
+
+  jury2: `你是"陪审员乙·临场女士"，庭审的陪审员之一。你的视角：不看宏大叙事，只看明天能不能动手。你最在意起步难度。
+
+【输出格式——严格遵守】
+第一行必须是结论，格式精确为：[结论：去做] 或 [结论：不做]
+第二行起写你的评议意见（120-180字）。
+
+铁律：
+- 第一行的结论标记必须出现
+- 必须引用用户原话里的具体词句
+- 紧扣用户的具体情境，禁止泛泛而谈
+- 你的视角是"明天能不能落地"——哪个选择更可能真的发生
+- 语气：务实、直白、不耐烦空话`,
+
+  jury3: `你是"陪审员丙·知心大姐"，庭审的陪审员之一。你的视角：听用户心里那个被压住的声音。你最在意内在动机和情绪健康。
+
+【输出格式——严格遵守】
+第一行必须是结论，格式精确为：[结论：去做] 或 [结论：不做]
+第二行起写你的评议意见（120-180字）。
+
+铁律：
+- 第一行的结论标记必须出现
+- 必须引用用户原话里的具体词句
+- 紧扣用户的具体情境，禁止套话、禁止鸡汤
+- 你的视角是"为谁而活"——区分用户是在为自己想要，还是在为别人应该
+- 语气：温和但犀利，像真懂你的人`,
+
+  jury4: `你是"陪审员丁·老成先生"，庭审的陪审员之一。你的视角：见过太多人栽跟头，最在意风险和最坏情况。
+
+【输出格式——严格遵守】
+第一行必须是结论，格式精确为：[结论：去做] 或 [结论：不做]
+第二行起写你的评议意见（120-180字）。
+
+铁律：
+- 第一行的结论标记必须出现
+- 必须引用用户原话里的具体词句
+- 紧扣用户的具体情境，禁止泛泛而谈
+- 你的视角是"最坏情况"——把下行风险具体写出来，问用户扛不扛得住
+- 语气：老练、保守、不冒进`,
+
+  jury5: `你是"陪审员戊·锐气青年"，庭审的陪审员之一。你的视角：不试怎么知道？你最在意多巴胺和可能性。
+
+【输出格式——严格遵守】
+第一行必须是结论，格式精确为：[结论：去做] 或 [结论：不做]
+第二行起写你的评议意见（120-180字）。
+
+铁律：
+- 第一行的结论标记必须出现
+- 必须引用用户原话里的具体词句
+- 紧扣用户的具体情境，禁止空喊口号
+- 你的视角是"不行动才是最大的风险"——但要有依据，不是盲目乐观
+- 语气：年轻、有劲、但不轻浮`,
+};
+
+const JUDGE_PROMPT = `你是"审判长·酌"，抉择仲裁庭的审判长。现在要就一案作出终审裁定。
+
+庭审已经进行完毕：
+- 正方代表主张"去做"，反方代表主张"不做"，已分别陈词
+- 五位陪审员已各自给出独立结论与评议
+
+你的职责：综合双方论点与陪审团评议，写一份正式的裁定书，并给出最终裁定。
+
+【输出格式——严格遵守】
+不要任何结论标记行。按以下结构写一份正式裁定书（共 400-600 字）：
+
+第一段【案件缘起】：用"本案缘起于……"开头，一两句话复述用户的纠结，引用用户原话。
+
+第二段【双方主张】：用"正方代表主张……，其要旨为……"和"反方代表主张……，其要旨为……"分别概括双方核心论点，各一两句。要忠实于他们实际的陈词。
+
+第三段【陪审团评议】：用"五位陪审员中，X 位倾向去做，X 位倾向不做。"概括陪审团意见分布，可点名引用一两位陪审员的关键论点。
+
+第四段【本院认为】：这是核心说理段。用"本院认为，"开头，综合所有意见给出你的判断。要：
+- 指出本案的真正关键点（不是泛泛的"要勇敢"或"要稳重"，而是这件事特有的关键点）
+- 回应正方最有力的论点
+- 回应反方最有力的论点
+- 说明你为何偏向某一方
+
+最后一段【裁定】：另起一行，格式精确为：
+"综上所述，本院裁定：准予去做。" 或 "综上所述，本院裁定：不予去做。"
+后跟一句简短的结语。
+
+铁律：
+- 必须引用用户原话与双方/陪审员的实际论点，像真正的判决书引用证词
+- 禁止套话、禁止和稀泥（"两边都有道理"不能直接当结论）
+- 裁定必须明确二选一，不能模棱两可
+- 语气：庄重、克制、有分量，像真正的司法文书
+- 如果涉及外部信息（行业、政策等），可基于知识引用并标注"据本院所知"`;
+
+function buildCounselUserMessage(analysis){
+  return `【案情】
+用户陈述：${analysis.rawText}
+
+【系统辅助信息】
+本案被识别为「${TYPE_LABEL[analysis.type]||'人生岔路'}」类决策。核心矛盾：${analysis.conflictPairs[0][0]} vs ${analysis.conflictPairs[0][1]}。
+用户文本情绪信号——兴奋词${analysis.signals.excitement.c}次、焦虑词${analysis.signals.anxiety.c}次、风险词${analysis.signals.risk.c}次、遗憾词${analysis.signals.regret.c}次、他人压力词${analysis.signals.others.c}次、困难词${analysis.signals.difficulty.c}次、自我词${analysis.signals.selfWords.c}次。
+
+请基于以上案情，作为${analysis._counselRole}发表你的开庭陈词。`;
+}
+
+function buildJurorUserMessage(analysis, counselSummaries){
+  return `【案情】
+用户陈述：${analysis.rawText}
+
+【庭审已进行】
+正方代表主张"去做"，其陈词摘要：
+${counselSummaries.pro || '（暂缺）'}
+
+反方代表主张"不做"，其陈词摘要：
+${counselSummaries.con || '（暂缺）'}
+
+【你的任务】
+作为${analysis._jurorRole}，请基于案情与双方陈词，给出你的独立评议。第一行写结论，第二行起写理由。`;
+}
+
+function buildJudgeUserMessage(analysis, counselSummaries, jurorResults){
+  const jurorLines = jurorResults.map((r,i) => {
+    const lean = r.lean || '弃权';
+    const summary = (r.full || '').replace(/^\s*\[结论[：:]\s*(去做|不做)\s*\]\s*\n?/, '').trim().slice(0, 100);
+    return `陪审员${['甲','乙','丙','丁','戊'][i]}（${r.name}）：${lean}\n  评议摘要：${summary}…`;
+  }).join('\n\n');
+
+  return `【案情】
+用户陈述：${analysis.rawText}
+案件类型识别：「${TYPE_LABEL[analysis.type]||'人生岔路'}」
+
+【正方代表陈词】
+${counselSummaries.pro || '（暂缺）'}
+
+【反方代表陈词】
+${counselSummaries.con || '（暂缺）'}
+
+【五位陪审员评议】
+${jurorLines}
+
+【审判长任务】
+请综合以上材料，写一份正式裁定书，并给出最终裁定。`;
+}
+
+
+/* ---------- init dates & case no ---------- */
+const weekdays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+let CURRENT_CASE_NO = '';
+function initMast(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const code = String(Math.floor(Math.random()*9000)+1000);
+  CURRENT_CASE_NO = `（${y}）择字第${code}号`;
+  document.getElementById('mastDate').innerHTML =
+    `${y}.${m}.${d}<br>${weekdays[now.getDay()]}`;
+}
+
+/* ---------- analyze the dilemma (heuristic) ---------- */
+function countMatches(text, words){
+  return words.reduce((s,w)=>{
+    let idx = 0, c = 0;
+    while((idx = text.indexOf(w, idx)) !== -1){ c++; idx += w.length; }
+    return s + c;
+  }, 0);
+}
+const clamp = v => Math.max(1, Math.min(10, Math.round(v)));
+
+// scenario classification
+const TYPE_KEYWORDS = {
+  career:       ['辞职','辞掉','跳槽','换工作','创业','转行','升职','离职','体制内','体制','下海','转岗','上班','工作','offer','跳槽','熬不住','编内','铁饭碗'],
+  relationship: ['分手','复合','结婚','离婚','表白','相亲','对象','女朋友','男朋友','老公','老婆','暗恋','挽回','在一起','分开','婚','恋','男友','女友','谈了','异地','出轨','冷暴力','婆媳'],
+  finance:      ['买房','卖房','贷款','投资','股票','基金','消费','花钱','借钱','理财','首付','买车','卖车','存款','房贷','车贷','囤','币','炒股','基金'],
+  education:    ['考研','出国','留学','报班','转专业','保研','考博','读博','复读','转学','专业','学校','读研'],
+  health:       ['手术','治疗','看病','减肥','健身','吃药','就医','住院','复查','医生','病','瘦身','戒烟','戒酒'],
+  social:       ['绝交','搬家','远离','断联','拉黑','和解','道歉','翻脸','搬走','回老家','去外地','删好友'],
+};
+// priority when multiple types match equally — more specific first
+const TYPE_PRIORITY = ['relationship','health','education','finance','social','career','generic'];
+const TYPE_LABEL = {
+  career:'职业决策', relationship:'感情抉择', finance:'财务判断',
+  education:'学业方向', health:'健康处置', social:'人际取舍', generic:'人生岔路',
+};
+const CONFLICTS = {
+  career:       [['体制/平台的稳定','自由与不确定'],['可预期的轨道','不可预测的回报']],
+  relationship: [['已投入的时间','未来是否真的匹配'],['习惯与孤独','重新开始的可能']],
+  finance:      [['现金流压力','资产长期增值'],['当下的享受','长期的积累']],
+  education:    [['当前的机会成本','学历/技能增值'],['时间投入','未来门槛']],
+  health:       [['短期痛苦或副作用','长期健康收益'],['当下的不便','未来的治愈']],
+  social:       [['关系的断裂','自我保护'],['社交尴尬','清晰的边界']],
+  generic:      [['当前的舒适','改变的可能'],['已知','未知']],
+};
+
+function detectType(text){
+  const counts = {};
+  for(const t in TYPE_KEYWORDS){
+    counts[t] = countMatches(text, TYPE_KEYWORDS[t]);
+  }
+  // pick by priority order on ties — more specific scenario wins
+  let best = 'generic', bestC = 0;
+  for(const t of TYPE_PRIORITY){
+    if(counts[t] > bestC){ bestC = counts[t]; best = t; }
+  }
+  return best;
+}
+function extractSubject(text, type){
+  const m = text.match(/^(?:要不要|该不该|应不应该|是不是该|是否|要不要去|该不该去|要不要现在|该不该现在|要不要现在就|该不该现在就)(.+)/);
+  let core = m ? m[1].trim() : text;
+  core = core.split(/[,，。；;！!？?]/)[0].trim();
+  if(core.length > 18) core = core.slice(0, 17) + '…';
+  return core || '这件事';
+}
+function computeSignals(text){
+  const make = (words) => {
+    const c = countMatches(text, words);
+    return { c, has: c>0, level: c===0?'none':c===1?'weak':c<=3?'mid':'strong' };
+  };
+  return {
+    excitement: make(['兴奋','期待','想','喜欢','热爱','梦想','渴望','希望','心动','向往','憧憬','不想熬','受够','厌倦','不想再','真的不想']),
+    anxiety:    make(['怕','害怕','担心','焦虑','纠结','犹豫','恐惧','不安','彷徨','舍不得','不甘','不舍','放不下','舍不得']),
+    future:     make(['未来','以后','长期','长远','发展','职业','前途','人生','一辈子','三年','五年','前景','将来','回看']),
+    difficulty: make(['难','复杂','麻烦','累','辛苦','折腾','艰难','不容易','没底气','没把握','熬','压力','吃力','扛']),
+    selfWords:  make(['自己','我 ','内心','真正','想要','我觉得','我认为','我想','我不想','我受够','我自己']),
+    others:     make(['父母','家人','别人','他们','应该','要求','期待','压力','期望','面子','家里','妈','爸','老婆','老公','对象','亲戚']),
+    risk:       make(['失败','风险','损失','最坏','承担','跌','错','完蛋','赔','亏','崩','垮']),
+    regret:     make(['后悔','遗憾','不甘心','错过','一直想','念念不忘','惦记','放不下','没去成','没敢','要是当时','早知道','总会想','不甘']),
+  };
+}
+
+function analyzeDilemma(rawText){
+  const text = rawText.trim();
+  const type = detectType(text);
+  const subject = extractSubject(text, type);
+  const conflictPairs = CONFLICTS[type];
+  const signals = computeSignals(text);
+
+  // identify "do / not do" pattern
+  const doMatch = text.match(/^(要不要|该不该|应不应该|是不是该|是否|要不要去|该不该去|要不要现在|该不该现在)(.+)/);
+  let actionText, optionA, optionB;
+  if(doMatch){
+    actionText = doMatch[2].trim();
+    optionA = '去做：' + actionText;
+    optionB = '不做：' + actionText;
+  } else {
+    actionText = subject;
+    optionA = '去做';
+    optionB = '不做';
+  }
+
+  // deterministic noise seeded by text (same input -> same output)
+  const seed = text.length * 7 + (text.charCodeAt(0)||1) + (text.charCodeAt(text.length-1)||1);
+  const noise = k => {
+    const x = Math.sin(seed * k * 13.7) * 10000;
+    return (x - Math.floor(x)) * 2 - 1; // -1 ~ 1
+  };
+
+  const s = signals;
+  // scores for "DO"
+  const scoresDo = {
+    dopamine:  clamp(5 + s.excitement.c*1.4 - s.anxiety.c*0.6 + noise(1)*1.3),
+    longterm:  clamp(5 + s.future.c*1.2 + s.excitement.c*0.8 - s.anxiety.c*0.4 + noise(2)*1.1),
+    friction:  clamp(6 - s.difficulty.c*1.3 + s.excitement.c*0.4 + noise(3)*1.1),
+    intrinsic: clamp(5 + s.selfWords.c*1.3 - s.others.c*0.7 + noise(4)*1.0),
+    risk:      clamp(6 - s.risk.c*1.4 + noise(5)*1.0),
+    regret:    clamp(5 + s.regret.c*1.5 + s.excitement.c*0.5 + noise(11)*1.1),
+  };
+  // scores for "DON'T"
+  const scoresDont = {
+    dopamine:  clamp(4 + s.anxiety.c*0.4 - s.excitement.c*0.5 + noise(6)*1.0),
+    longterm:  clamp(5 - s.future.c*0.6 + s.anxiety.c*0.4 + noise(7)*1.0),
+    friction:  clamp(7 + s.difficulty.c*0.8 + noise(8)*0.8),
+    intrinsic: clamp(5 + s.others.c*0.7 - s.selfWords.c*0.4 + noise(9)*0.8),
+    risk:      clamp(7 + s.risk.c*1.0 + noise(10)*0.8),
+    regret:    clamp(5 - s.regret.c*0.6 + s.anxiety.c*0.4 + noise(12)*0.9),
+  };
+
+  return { type, subject, conflictPairs, signals, optionA, optionB, actionText, scoresDo, scoresDont, rawText:text };
+}
+
+/* ---------- scoring ---------- */
+function weightedScore(scores, weights){
+  let s = 0;
+  for(const k in weights) s += scores[k] * weights[k];
+  return s;
+}
+
+/* ---------- juror speech generation ---------- */
+function topDim(scores){
+  return DIMENSIONS.reduce((a,b)=> scores[a.key] >= scores[b.key] ? a : b);
+}
+function bottomDim(scores){
+  return DIMENSIONS.reduce((a,b)=> scores[a.key] <= scores[b.key] ? a : b);
+}
+function gap(a,b){ return Math.abs(a-b) }
+
+/* ============================================================
+   SPEECH BANK — 按场景类型分发的实质发言
+   每个函数返回 lines 数组，引用 analysis.subject / conflictPairs / signals
+   ============================================================ */
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+const SPEECH_BANK = {
+
+  /* ---------- 职业 ---------- */
+  career: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `职业决策先看回报曲线和可逆性，不掺感情。`,
+        `把「${a.subject}」当一笔投资来算——本金、回报期、退出成本。`,
+      ]));
+      L.push(
+        `这件事的核心矛盾是「${a.conflictPairs[0][0]}」与「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"未来/发展"——说明你在算长期账，这是好事。`
+          : `但你整段话没出现一次"未来/发展"——你还没想清楚三年后往哪走。`)
+      );
+      L.push(
+        s.risk.has
+          ? `你写了${s.risk.c}次风险词。职业切换真正的风险不是失败本身，是${a.conflictPairs[0][1]}带来的现金流缺口——能撑几个月？没算清这个数之前，"怕"不是懦弱，是直觉在拦你。`
+          : `你没提风险。但职业决策最该算的就是窗口期和现金储备——缺一个，所谓"自由"就是裸奔。`
+      );
+      L.push(margin > 1.2
+        ? `综合 ROI，我倾向${fav}。差值 ${margin.toFixed(2)}，账算得清。`
+        : `勉强${fav}，差值 ${margin.toFixed(2)}。如果说不清现金储备能撑多久，那答案其实是${weak}。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，先别算账，先听身体。`,
+        `你又在用"应该"压"想要"了对吧。`,
+      ]));
+      L.push(
+        s.excitement.has
+          ? `你写"想/不想再熬/厌倦"这种词${s.excitement.c}次——身体已经在喊救命了。${a.subject}对你不是选项，是出口。`
+          : `你整段话里没有一个"想""期待"——这种状态下做什么职业决定都不会痛快，因为你根本不知道自己要什么，只知道在逃什么。`
+      );
+      L.push(
+        s.others.has
+          ? `而且我看到了"父母/应该/家里"——这事里掺了别人的声音。他们不替你过你的人生，也不替你扛你半夜的失眠。`
+          : `这件事好歹是你自己的——那就问一句：五年后回看，哪个版本的你不会怨恨现在的自己？`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。你压抑太久了。`
+        : `我倾向${fav}，但更重要的是——别逼自己马上定，先睡三天再说。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，职业决策从不靠情怀。`,
+        `省省吧，先看你扛不扛得住。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。这不是选择题，是` +
+        (s.difficulty.has ? `你吃不吃得了苦的问题。你写了${s.difficulty.c}次"难/累/熬"——嘴上说要，身体先认怂。` : `你舍不舍得放下的问题。`)
+      );
+      L.push(
+        s.anxiety.has
+          ? `"怕/纠结"出现${s.anxiety.c}次。怕不是懦弱，是直觉告诉你没准备好——具体怕什么？说不出来的那个，就是真的怕。`
+          : `你一点没写怕——要么真想清楚了，要么是逃避式乐观。我赌后者。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再拖下去只是用"再想想"包装拖延。`
+        : `勉强${fav}。但说真的——你不是在选择，是在逃避承担。${fav}之后扛不住，别怪这个决定。`);
+      return L;
+    },
+  },
+
+  /* ---------- 感情 ---------- */
+  relationship: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `感情决策我按"未来匹配度"算，不按"过去投入"。`,
+        `先把沉没成本从账本里划掉。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"未来/一辈子"——说明你已经在想长期匹配。`
+          : `但你没提"未来"——这是关键信号：你自己都不确定这段关系有没有未来。`)
+      );
+      L.push(
+        s.others.has
+          ? `出现了"父母/家里/应该"——如果这件事有外部压力，那感情里掺了别人，决策质量必然下降。先分清：是你要分/结，还是他们要你分/结。`
+          : `没提家人朋友——那至少这是你自己的判断，纯粹。`
+      );
+      L.push(margin > 1.2
+        ? `综合看${fav}。差值 ${margin.toFixed(2)}——感情里这种清晰很罕见。`
+        : `勉强${fav}，差值 ${margin.toFixed(2)}。感情决策差距小时，默认选日后不会反复想"如果当时"的那个。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，感情里没有"应该"，只有"愿意"。`,
+        `先抱抱你。这种事最磨人。`,
+      ]));
+      L.push(
+        s.anxiety.has
+          ? `你写"怕/舍不得/纠结"${s.anxiety.c}次——舍不得的不是TA，是${a.conflictPairs[0][0]}。但那些时间已经花掉了，要不回来，问题是接下来还要不要继续花。`
+          : `你这段话出奇地平静——要么是想清楚了，要么是麻木了。后者更可怕。`
+      );
+      L.push(
+        s.excitement.has
+          ? `但你还有"想/喜欢"这种词——说明心里还有温度。那就问问自己：是温度没了，还是温度被折磨盖住了？这两者答案完全不同。`
+          : `整段没有"想/喜欢/心动"——爱意如果已经凉透，再多沉没成本也捂不热。`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。你值得不纠结的爱。`
+        : `我倾向${fav}。但说真的——感情里纠结本身就是答案的一种。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，感情决策最骗自己。`,
+        `省省吧，先把"还爱不爱"老实回答了。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.anxiety.has
+          ? `你"怕/舍不得"${s.anxiety.c}次。舍不得的不是感情，是${a.conflictPairs[0][0]}——但那是已经沉掉的成本，捞不回来。`
+          : `你居然没写"舍不得"——要么真放下了，要么在硬撑。`)
+      );
+      L.push(
+        s.others.has
+          ? `还有"父母/家里"的声音——感情里一旦掺了别人，纠结的就不是爱不爱，是敢不敢。`
+          : `没人插嘴——那就老实问自己一句：现在这样继续下去，三年后你会不会变成自己讨厌的样子？`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再拖就是用"再给一次机会"消耗彼此。`
+        : `勉强${fav}。但感情里差距小，说明你真正怕的不是选错，是孤独。`);
+      return L;
+    },
+  },
+
+  /* ---------- 财务 ---------- */
+  finance: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `财务决策我按现金流和流动性算。`,
+        `先把"想要"和"需要"分开。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"长期/未来"——说明在算长期账，对。`
+          : `但没提"长期/未来"——只看当下的财务决策，几乎一定会后悔。`)
+      );
+      L.push(
+        s.risk.has
+          ? `你写了${s.risk.c}次风险词。财务决策的风险不是价格波动，是流动性锁死——急用钱时拿不出来才是真风险。`
+          : `没提风险——但任何大额支出/投资都该先问：最坏情况你扛得住吗？扛不住的回报率都是纸面。`
+      );
+      L.push(margin > 1.2
+        ? `综合${fav}。差值 ${margin.toFixed(2)}，账算得清。`
+        : `勉强${fav}，差值 ${margin.toFixed(2)}。财务决策差距小时，默认选不锁死流动性的那个。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，钱是为你服务的，不是反过来。`,
+        `先别算账，先问你自己想要什么样的生活。`,
+      ]));
+      L.push(
+        s.excitement.has
+          ? `你写"想/喜欢"${s.excitement.c}次——这件事对你不只是数字，是生活方式的选择。那就别只算 ROI。`
+          : `你这段话里没有"想要/喜欢"——纯理性消费/投资。那就更要小心：纯算账的事，最容易压住真实需求。`
+      );
+      L.push(
+        s.difficulty.has
+          ? `但出现了${s.difficulty.c}次"压力/累"——如果这件事让你财务上紧到喘不过气，那它买的不是资产，是焦虑。`
+          : `没提"压力"——说明现金流扛得住。那就好办，剩下只是值不值的问题。`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。钱要花在让生活更顺的地方。`
+        : `我倾向${fav}。但纠结这么久，说明你心里其实没那么想要——那答案可能是不买。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，财务决策最怕上头。`,
+        `省省吧，先看你存折上有多少。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.future.has
+          ? `你提了${s.future.c}次"未来"——但未来不是许愿，是算出来的。`
+          : `一个字"未来"都没——那你是在消费，不是投资。承认这一点，决策简单一半。`)
+      );
+      L.push(
+        s.anxiety.has
+          ? `"怕/纠结"${s.anxiety.c}次。财务上怕，通常是因为你清楚自己算不起这个账——直觉比 Excel 诚实。`
+          : `你没写怕——要么是真有钱，要么是没算过。后者更危险。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再纠结就是给销售送业绩。`
+        : `勉强${fav}。财务决策差距小，说明你买不起又想买——那答案其实是不买。`);
+      return L;
+    },
+  },
+
+  /* ---------- 学业 ---------- */
+  education: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `学业决策按"时间成本 vs 门槛增值"算。`,
+        `先把它当一笔人力资本投资。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"未来/发展"——学历是门槛，但不是回报本身。`
+          : `没提"未来"——但学业决策本质上全是关于未来的。你跳过了最关键的一步。`)
+      );
+      L.push(
+        s.difficulty.has
+          ? `你写了${s.difficulty.c}次"难/熬"——读书本身的痛苦是确定的，回报却是不确定的。这个比例要算清。`
+          : `没提"难"——要么是真喜欢，要么是没想清楚读书意味着什么。`
+      );
+      L.push(margin > 1.2
+        ? `综合${fav}。差值 ${margin.toFixed(2)}，方向清晰。`
+        : `勉强${fav}，差值 ${margin.toFixed(2)}。学业决策差距小时，默认选可逆性强的那个——读了能转，不读就回不去了。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，读书是为你自己，不是为简历。`,
+        `先别管别人怎么看，问你自己想不想学。`,
+      ]));
+      L.push(
+        s.excitement.has
+          ? `你写"想/喜欢"${s.excitement.c}次——学习这件事如果让你眼睛亮，那它就值。兴趣是最好的复利。`
+          : `整段没有"想/喜欢"——那你读书是为了什么？如果只是逃避就业或满足别人，这条路会很苦。`
+      );
+      L.push(
+        s.others.has
+          ? `出现了"父母/应该"——如果读书是为了满足别人，那再光鲜的学历也补不上心里的空洞。`
+          : `没提别人——好歹这是你自己的选择。那就对自己诚实：是想学，还是想躲？`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。为自己读书永远不亏。`
+        : `我倾向${fav}。但学习这条路很苦——心里没火，走不远。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，读书不是万能解药。`,
+        `省省吧，先看你读完要干嘛。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.future.has
+          ? `你提了${s.future.c}次"未来"——但读书不等于未来。学历是入场券，不是终点。`
+          : `没提"未来"——那你读书是为了躲什么？逃避式读书，跟逃避式就业一样贵。`)
+      );
+      L.push(
+        s.others.has
+          ? `"父母/应该"出现了——读书如果是为别人，那是在用几年时间换一个不是自己要的文凭。`
+          : `没人插嘴——那就老实回答：读完之后你要做什么？答不上来，那就是在用读书拖延人生。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再拖就是用"再想想"消耗时间。`
+        : `勉强${fav}。但学业决策差距小，说明你读书的"为什么"还没想清楚——想清楚比选哪个重要。`);
+      return L;
+    },
+  },
+
+  /* ---------- 健康 ---------- */
+  health: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `健康决策按"短期成本 vs 长期收益"算。`,
+        `先把恐惧放一边，看数据。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"长期/未来"——健康是少数几个长期一定复利的投资。`
+          : `没提"未来"——但健康决策本质都是关于未来的。当下舒服的事，长期往往最贵。`)
+      );
+      L.push(
+        s.anxiety.has
+          ? `你写"怕/担心"${s.anxiety.c}次——健康焦虑是真实的，但要做的是查清楚数据，不是用纠结代替决策。`
+          : `没提"怕"——要么是想清楚了，要么是低估了风险。后者在健康上特别危险。`
+      );
+      L.push(margin > 1.2
+        ? `综合${fav}。差值 ${margin.toFixed(2)}。`
+        : `勉强${fav}。健康决策差距小时，默认选更保守、更可逆的那个——身体不能退货。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，身体是你唯一的家。`,
+        `先别扛着，先听身体在说什么。`,
+      ]));
+      L.push(
+        s.difficulty.has
+          ? `你写"难/熬/压力"${s.difficulty.c}次——身体已经不舒服了，否则你不会写这些。别再用意志力硬撑。`
+          : `没提"难/熬"——那这件事可能是预防性的，好事，但别因此就忽略。`
+      );
+      L.push(
+        s.anxiety.has
+          ? `"怕/担心"出现${s.anxiety.c}次——这种怕是身体在求救。值得认真查清楚，不是"再观察观察"。`
+          : `你出奇平静——但健康上平静往往是麻木。建议至少去做一次检查。`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。身体的事，宁可小题大做。`
+        : `我倾向${fav}。但健康决策别图省事——拖出来的代价永远比早处理贵。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，健康上自欺最贵。`,
+        `省省吧，身体不会因为你不查就没事。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.anxiety.has
+          ? `"怕/担心"${s.anxiety.c}次——怕不是矫情，是直觉在告诉你这事不能拖。`
+          : `你没写怕——但健康上不焦虑往往是没认真想过最坏情况。`)
+      );
+      L.push(
+        s.difficulty.has
+          ? `"难/熬"出现${s.difficulty.c}次——这说明身体已经给你信号了。再硬扛，它只会用更狠的方式提醒你。`
+          : `没提"难/熬"——但健康决策里，"现在没什么感觉"恰恰是最危险的状态。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。健康上拖是最差选项。`
+        : `勉强${fav}。但身体的事，宁可错查，不可不查。`);
+      return L;
+    },
+  },
+
+  /* ---------- 人际 ---------- */
+  social: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `人际决策按"长期心理成本 vs 短期不适"算。`,
+        `先分清：是关系问题，还是边界问题。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.others.has
+          ? `你提到${s.others.c}次"别人/他们/应该"——说明这事里关系网的压力很大。但社交成本算不过来时，默认权重给自己。`
+          : `没提别人——那这是你和你自己之间的事，纯粹。`)
+      );
+      L.push(
+        s.anxiety.has
+          ? `"怕/纠结"${s.anxiety.c}次——人际上怕的往往是怕被议论。但议论你的人不替你过你的人生。`
+          : `没提怕——要么是想清楚，要么是没意识到后果。`
+      );
+      L.push(margin > 1.2
+        ? `综合${fav}。差值 ${margin.toFixed(2)}。`
+        : `勉强${fav}。人际决策差距小时，默认选日后不会反复内耗的那个。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，关系是为你赋能的，不是消耗你的。`,
+        `先别管面子，问你自己累不累。`,
+      ]));
+      L.push(
+        s.difficulty.has
+          ? `你写"难/累/折腾"${s.difficulty.c}次——关系让你这么累，本身就是答案。健康的关系不会让你写这么多"累"。`
+          : `没提"累"——那这段关系可能没那么糟，再想想。`
+      );
+      L.push(
+        s.selfWords.has
+          ? `你提到"自己/内心/我"${s.selfWords.c}次——好，至少你还在为自己想。那就别再用"怕伤感情"压住自己。`
+          : `你整段没提"自己"——你是不是把所有人都考虑了，唯独没考虑自己？`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。你不需要为所有人的感受负责。`
+        : `我倾向${fav}。但人际上别冲动——给自己一周冷静期再动手。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，人际决策最怕"再给一次机会"。`,
+        `省省吧，先看这段关系给你带来了什么。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.others.has
+          ? `"别人/他们/应该"出现${s.others.c}次——你在为别人活，这件事你自己清楚。`
+          : `没提别人——那这是纯粹的双人关系，看对方值不值得你继续投入。`)
+      );
+      L.push(
+        s.anxiety.has
+          ? `"怕/纠结"${s.anxiety.c}次——人际上怕，通常是怕孤独或怕被议论。但耗在错的关系里，比孤独更贵。`
+          : `你没写怕——要么是真想清楚了，要么是没意识到断了之后的后果。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再拖就是用"再给机会"消耗自己。`
+        : `勉强${fav}。但人际决策差距小，说明这段关系还有救——先沟通，别直接掀桌。`);
+      return L;
+    },
+  },
+
+  /* ---------- 兜底 ---------- */
+  generic: {
+    rational(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `先把这件事拆成可量化的部分。`,
+        `抛开情绪，看回报曲线。`,
+      ]));
+      L.push(
+        `「${a.subject}」的核心是「${a.conflictPairs[0][0]}」对「${a.conflictPairs[0][1]}」。` +
+        (s.future.has
+          ? `你提到${s.future.c}次"未来"——长期思维对，但要把"未来"具体化成可衡量的目标。`
+          : `没提"未来"——但你做的是关于未来的决策，跳过这一步就只能是情绪反应。`)
+      );
+      L.push(
+        s.risk.has
+          ? `你写${s.risk.c}次风险词——风险不是不做的理由，是不可控的下行才是。说得出最坏情况，才谈得上决策。`
+          : `没提风险——但任何决策都有下行。先问：最坏情况你扛得住吗？`
+      );
+      L.push(margin > 1.2
+        ? `综合${fav}。差值 ${margin.toFixed(2)}。`
+        : `勉强${fav}，差值 ${margin.toFixed(2)}。差距小时，默认选可逆性强的那个。`);
+      return L;
+    },
+    bestie(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `宝贝，先别急着选，先听你自己。`,
+        `你又在自己吓自己了对吧。`,
+      ]));
+      L.push(
+        s.excitement.has
+          ? `你写"想/喜欢"${s.excitement.c}次——身体在告诉你方向。别用理智压住它。`
+          : `整段没有"想/喜欢"——那你纠结的不是选哪个，是怕什么。先搞清楚怕的是什么。`
+      );
+      L.push(
+        s.others.has
+          ? `"父母/应该/别人"出现了——这事里掺了别人的声音。他们不替你过你的人生。`
+          : `没提别人——那这是你自己的事，纯粹。对自己诚实点。`
+      );
+      L.push(margin > 1.2
+        ? `我站${fav}。你值得不纠结的生活。`
+        : `我倾向${fav}。但纠结本身就在告诉你——答案不是非黑即白。`);
+      return L;
+    },
+    realist(a, lean, margin, fav, weak){
+      const s = a.signals;
+      const L = [];
+      L.push(pick([
+        `别装了，你心里早有答案。`,
+        `省省吧，先看你怕的到底是什么。`,
+      ]));
+      L.push(
+        `「${a.subject}」——${a.conflictPairs[0][0]} vs ${a.conflictPairs[0][1]}。` +
+        (s.anxiety.has
+          ? `"怕/纠结"${s.anxiety.c}次——怕不是懦弱，是直觉告诉你没准备好。具体怕什么？`
+          : `你没写怕——要么想清楚了，要么在硬撑。`)
+      );
+      L.push(
+        s.selfWords.has
+          ? `你提到"自己/我"${s.selfWords.c}次——好，至少在为自己想。那就别再用"再想想"拖延。`
+          : `整段没提"自己"——你为所有人想了，唯独没为自己。`
+      );
+      L.push(margin > 1.5
+        ? `${fav}。再拖就是逃避。`
+        : `勉强${fav}。差距小说明你真正怕的不是选错，是承担。`);
+      return L;
+    },
+  },
+};
+
+function generateSpeech(juror, analysis){
+  const sA = analysis.scoresDo, sB = analysis.scoresDont;
+  const wA = weightedScore(sA, juror.weights);
+  const wB = weightedScore(sB, juror.weights);
+  const lean = wA > wB ? 'A' : (wB > wA ? 'B' : 'tie');
+  const margin = gap(wA, wB);
+
+  if(lean === 'tie'){
+    // tie-breaker: lower friction wins
+    const fav = sA.friction >= sB.friction ? '去做' : '不做';
+    const lines = [
+      `两边总分完全打平。`,
+      `这种情况下我默认偏向明天就能动手的那个——先动起来比什么都重要。`,
+      `所以我倾向${fav}。`,
+    ];
+    return { lines, lean, wA, wB, margin };
+  }
+
+  const fav = lean==='A' ? '去做' : '不做';
+  const weak = lean==='A' ? '不做' : '去做';
+  const builder = SPEECH_BANK[analysis.type][juror.id];
+  const lines = builder(analysis, lean, margin, fav, weak);
+  return { lines, lean, wA, wB, margin };
+}
+
+/* ============================================================
+   渲染：8 角色分三阶段流式
+   阶段 1：正方 + 反方并行陈词
+   阶段 2：5 陪审员并行评议（读双方陈词）
+   阶段 3：法官写裁定书（读所有材料）
+   ============================================================ */
+const LEAN_RE = /\[结论[：:]\s*(去做|不做)\s*\]/;
+
+function speakerCardHTML(role, seat, name, roleText, opts={}){
+  const juryAttr = opts.jury ? `data-jury="${opts.jury}"` : '';
+  const leanIdAttr = opts.leanId ? `id="lean_${opts.leanId}"` : '';
+  const speechIdAttr = opts.speechId ? `id="speech_${opts.speechId}"` : '';
+  const footLabel = opts.footLabel || '本席意见';
+  const footInit = opts.footInit || '合议中…';
+  return `
+    <div class="speaker" data-role="${role}" ${juryAttr}>
+      <div class="speaker-seat"><span class="seat-dot"></span>${seat}</div>
+      <div class="speaker-name">${name}</div>
+      <div class="speaker-role">${roleText}</div>
+      <div class="speaker-speech" ${speechIdAttr}>
+        <p class="streaming"><span class="quote-mark">"</span><span class="tw">思考中…</span></p>
+      </div>
+      <div class="speaker-foot">
+        <span class="sf-label">${footLabel}</span>
+        <span class="sf-lean" ${leanIdAttr} style="color:var(--muted)">${footInit}</span>
+      </div>
+    </div>
+  `;
+}
+
+/* ---- 阶段 1：counsel ---- */
+function renderCounselSetup(){
+  const container = document.getElementById('counselTable');
+  // keep the .counsel-vs element
+  container.innerHTML = '<div class="counsel-vs">辩</div>';
+  const pro = document.createElement('div');
+  pro.innerHTML = speakerCardHTML('pro', COUNSEL_PRO.seat, COUNSEL_PRO.name, COUNSEL_PRO.role,
+    { speechId:'pro', leanId:'pro', footLabel:'正方主张', footInit:'准备陈词…' });
+  const con = document.createElement('div');
+  con.innerHTML = speakerCardHTML('con', COUNSEL_CON.seat, COUNSEL_CON.name, COUNSEL_CON.role,
+    { speechId:'con', leanId:'con', footLabel:'反方主张', footInit:'准备陈词…' });
+  // insert before the vs badge
+  container.insertBefore(pro.firstElementChild, container.firstChild);
+  container.appendChild(con.firstElementChild);
+  // reveal
+  container.querySelectorAll('.speaker').forEach((el, i) => {
+    setTimeout(()=> el.classList.add('reveal'), i*200);
+  });
+}
+
+async function streamCounsel(side, analysis){
+  const role = side==='pro' ? COUNSEL_PRO : COUNSEL_CON;
+  const speechEl = document.getElementById(`speech_${side}`);
+  const leanEl = document.getElementById(`lean_${side}`);
+  const tw = speechEl.querySelector('.tw');
+  let full = '';
+
+  analysis._counselRole = role.name;
+  leanEl.textContent = '准备陈词…';
+
+  // 非流式拿结果
+  try {
+    full = await callAI(
+      [
+        {role:'system', content: COUNSEL_PROMPTS[side]},
+        {role:'user',   content: buildCounselUserMessage(analysis)},
+      ],
+      { model: AI_MODEL, maxTokens: 800 }
+    );
+  } catch(e) {
+    full = '审判长、各位陪审员：（陈词生成失败：' + (e.message||e) + '）';
+    console.error('[counsel '+side+']', e);
+  }
+
+  leanEl.textContent = side==='pro' ? '主张去做' : '主张不做';
+  leanEl.style.color = '';
+
+  // 打字机模拟
+  const paras = full.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  speechEl.classList.remove('streaming');
+  speechEl.innerHTML = '<p><span class="quote-mark">"</span><span class="tw"></span></p>';
+  const target = speechEl.querySelector('.tw');
+  await typewrite(target, full, 15);
+
+  // finalize
+  speechEl.innerHTML = '<p><span class="quote-mark">"</span>' +
+    paras.join('</p><p>') +
+    '<span style="color:var(--muted-2);font-style:italic">"</span></p>';
+
+  return full;
+}
+
+function typewrite(target, text, speed=25){
+  return new Promise(resolve => {
+    let pos = 0;
+    const chunk = Math.max(2, Math.round(text.length / 80));
+    function step(){
+      if(pos >= text.length){ resolve(); return; }
+      pos = Math.min(text.length, pos + chunk);
+      target.textContent = text.slice(0, pos);
+      setTimeout(step, speed);
+    }
+    step();
+  });
+}
+
+async function renderCounselAI(analysis){
+  renderCounselSetup();
+  const [pro, con] = await Promise.all([
+    streamCounsel('pro', analysis),
+    streamCounsel('con', analysis),
+  ]);
+  return { pro, con };
+}
+
+/* ---- 阶段 2：jury (5 seats) ---- */
+function renderJurySetup(){
+  const container = document.getElementById('juryBox');
+  container.innerHTML = '';
+  JURORS.forEach((j, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = speakerCardHTML('jury', j.seat, j.name, j.role,
+      { jury:String(i+1), speechId:j.id, leanId:j.id, footLabel:'本席意见', footInit:'评议中…' });
+    const el = wrapper.firstElementChild;
+    container.appendChild(el);
+    setTimeout(()=> el.classList.add('reveal'), i*150);
+  });
+}
+
+async function streamJuror(j, analysis, counselSummaries){
+  const speechEl = document.getElementById(`speech_${j.id}`);
+  const leanEl = document.getElementById(`lean_${j.id}`);
+  const tw = speechEl.querySelector('.tw');
+  let full = '';
+
+  analysis._jurorRole = j.name;
+  leanEl.textContent = '评议中…';
+
+  try {
+    full = await callAI(
+      [
+        {role:'system', content: JUROR_PROMPTS[j.id]},
+        {role:'user',   content: buildJurorUserMessage(analysis, counselSummaries)},
+      ],
+      { model: AI_MODEL, maxTokens: 500 }
+    );
+  } catch(e) {
+    full = '[结论：不做]\n（评议生成失败。）';
+    console.error('[juror '+j.id+']', e);
+  }
+
+  // 解析结论
+  const m = full.match(LEAN_RE);
+  if(m){
+    leanEl.textContent = m[1]==='去做' ? '倾向去做' : '倾向不做';
+    leanEl.style.color = '';
+  } else {
+    leanEl.textContent = '弃权';
+  }
+
+  // 打字机（只显示结论标记之后的部分）
+  const clean = full.replace(/^\s*\[结论[：:]\s*(去做|不做)\s*\]\s*\n?/, '').trim();
+  const paras = clean.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  speechEl.classList.remove('streaming');
+  speechEl.innerHTML = '<p><span class="quote-mark">"</span><span class="tw"></span></p>';
+  const target = speechEl.querySelector('.tw');
+  await typewrite(target, clean, 15);
+
+  speechEl.innerHTML = '<p><span class="quote-mark">"</span>' +
+    paras.join('</p><p>') +
+    '<span style="color:var(--muted-2);font-style:italic">"</span></p>';
+
+  return { id:j.id, name:j.name, lean: m ? m[1] : null, full };
+}
+
+async function renderJuryAI(analysis, counselSummaries){
+  renderJurySetup();
+  const results = await Promise.all(
+    JURORS.map(j => streamJuror(j, analysis, counselSummaries))
+  );
+  return results;
+}
+
+/* ---- 阶段 3：judge ---- */
+const RULING_RE = /综上所述[，,]\s*本院裁定[：:]\s*(准予去做|不予去做)/;
+
+async function streamJudge(analysis, counselSummaries, jurorResults){
+  const bodyEl = document.getElementById('judgeBody');
+  const rulingEl = document.getElementById('judgeRuling');
+  const sigDate = document.getElementById('judgeDate');
+  const caseNoEl = document.getElementById('judgeCaseNo');
+
+  caseNoEl.textContent = '案号 ' + CURRENT_CASE_NO;
+  const now = new Date();
+  sigDate.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+
+  bodyEl.innerHTML = '<p style="color:var(--muted);font-style:italic">审判长正在起草裁定书…</p>';
+  rulingEl.innerHTML = '<span style="color:var(--muted);font-style:italic">裁定即将宣布…</span>';
+
+  let full = '';
+  try {
+    full = await callAI(
+      [
+        {role:'system', content: JUDGE_PROMPT},
+        {role:'user',   content: buildJudgeUserMessage(analysis, counselSummaries, jurorResults)},
+      ],
+      { model: AI_MODEL, maxTokens: 1200 }
+    );
+  } catch(e) {
+    full = '本院审理过程中遇技术障碍，无法作出裁定。请重新立案。\n\n综上所述，本院裁定：不予去做。';
+    console.error('[judge]', e);
+  }
+
+  // 打字机分段显示
+  const rulingMatch = full.match(RULING_RE);
+  const idx = full.indexOf('综上所述');
+  const bodyPart = (idx >= 0 && rulingMatch) ? full.slice(0, idx) : full;
+  const rulingPart = (idx >= 0 && rulingMatch) ? full.slice(idx) : '';
+
+  bodyEl.innerHTML = '<p><span class="tw-judge"></span></p>';
+  const target = bodyEl.querySelector('.tw-judge');
+  await typewrite(target, bodyPart, 10);
+
+  bodyEl.innerHTML = renderJudgeBody(bodyPart);
+  rulingEl.innerHTML = rulingPart
+    ? renderJudgeRuling(rulingPart)
+    : '<span style="color:var(--muted)">裁定格式异常，请参考正文。</span>';
+
+  return rulingMatch ? rulingMatch[1] : null;
+}
+
+function renderJudgeBody(text){
+  if(!text.trim()) return '<p style="color:var(--muted)">—</p>';
+  const paras = text.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  return paras.map(p => `<p>${p}</p>`).join('');
+}
+
+function renderJudgeRuling(text){
+  // highlight the裁定 verb
+  return text
+    .replace(/(准予去做|不予去做)/g, '<span class="verb">$1</span>')
+    .replace(/\n/g, '<br>');
+}
+
+/* ---------- verdict ---------- */
+function renderVerdict(analysis, leans){
+  const sA = analysis.scoresDo, sB = analysis.scoresDont;
+  // aggregate juror votes from AI leans
+  const leanVals = Object.values(leans).filter(Boolean);
+  const aVotes = leanVals.filter(v=>v==='去做').length;
+  const bVotes = leanVals.filter(v=>v==='不做').length;
+  const ties = leanVals.length - aVotes - bVotes;
+
+  // overall weighted score
+  const avgWeights = {};
+  DIMENSIONS.forEach(d=>{
+    avgWeights[d.key] = JURORS.reduce((s,j)=>s+j.weights[d.key],0)/JURORS.length;
+  });
+  const scA = weightedScore(sA, avgWeights);
+  const scB = weightedScore(sB, avgWeights);
+
+  let chosen, chosenLetter;
+  if(aVotes > bVotes){
+    chosen = 'A';
+  }else if(bVotes > aVotes){
+    chosen = 'B';
+  }else if(Math.abs(scA-scB) < 0.15){
+    // tie vote + close score — pick lower-friction direction
+    chosen = sA.friction >= sB.friction ? 'A' : 'B';
+  }else{
+    chosen = scA >= scB ? 'A' : 'B';
+  }
+  chosenLetter = chosen;
+
+  const margin = Math.abs(scA - scB);
+  const confidence = Math.min(0.96, 0.5 + margin*0.18 + Math.abs(aVotes-bVotes)*0.08);
+  const chosenLabel = chosen==='A' ? '去做' : '不做';
+  const weakLabel   = chosen==='A' ? '不做' : '去做';
+
+  // verdict headline
+  const main = document.getElementById('verdictMain');
+  main.innerHTML = (chosen==='A'
+      ? `去 <em class="chosen-A">做</em>`
+      : `别 <em class="chosen-B">做</em>`)
+    + `<br><span style="font-size:.4em;color:var(--muted);font-style:italic;font-weight:300;display:inline-block;margin-top:10px">「${analysis.actionText}」</span>`;
+
+  // eyebrow shows identified scenario
+  document.getElementById('verdictEyebrow').innerHTML =
+    `终审裁定 <span style="color:var(--muted);margin-left:14px">· ${TYPE_LABEL[analysis.type] || '人生岔路'}</span>`;
+
+  // confidence (color follows verdict)
+  const fill = document.getElementById('vcFill');
+  const pct = document.getElementById('vcPct');
+  fill.style.width = (confidence*100)+'%';
+  fill.style.background = chosen==='A' ? 'var(--gold)' : 'var(--steel-bright)';
+  pct.textContent = (confidence*100).toFixed(0)+'%';
+  pct.style.color = chosen==='A' ? 'var(--gold)' : 'var(--steel-bright)';
+
+  // reasoning
+  const favored = chosen==='A'?sA:sB;
+  const weaker  = chosen==='A'?sB:sA;
+  const favTop = topDim(favored);
+  const weakBot = bottomDim(weaker);
+
+  let reason = `<p>本案被识别为<span class="hl">「${TYPE_LABEL[analysis.type]||'人生岔路'}」</span>。核心矛盾是「<span class="hl">${analysis.conflictPairs[0][0]}</span>」与「<span class="hl">${analysis.conflictPairs[0][1]}</span>」之间的取舍。五位陪审员中，<span class="hl">${aVotes} 票去做</span>、<span class="hl">${bVotes} 票不做</span>${ties?`、${ties} 票弃权`:''}，综合下来<span class="hl">${chosenLabel}的得分 ${Math.max(scA,scB).toFixed(2)}</span> 领先 ${margin.toFixed(2)}。</p>`;
+  reason += `<p>最关键的一项是<span class="hl">「${favTop.zh}」</span>——这一项拿到 <span class="hl">${favored[favTop.key]}</span> 分，是最该看重的点。而「${weakLabel}」方向最弱的是<span class="hl">「${weakBot.zh}」</span>，只有 ${weaker[weakBot.key]} 分。</p>`;
+
+  if(margin < 0.25){
+    reason += `<p>坦白说，两个方向差距很小。这种时候真正的胜负不在选哪个，而在<span class="hl">哪个你明天更愿意动手</span>——所以本庭偏向更容易开始的那个。纠结的代价，往往比选错更高。</p>`;
+  }else if(margin < 0.6){
+    reason += `<p>差距存在但不算压倒性。如果你心里还有没写出来的顾虑，可以回去把那件事描述得更具体些，再审一次。</p>`;
+  }else{
+    reason += `<p>这是一个差距明显的判决。继续犹豫只会让机会成本继续累计——<span class="hl">现在的答案，三个月后依然是答案</span>。</p>`;
+  }
+
+  reason += `<p style="font-style:italic;color:var(--muted);font-family:var(--serif);margin-top:18px">本庭不替你承担责任。但这些数字摆在这里了。</p>`;
+
+  document.getElementById('verdictReason').innerHTML = reason;
+
+  setTimeout(()=> document.getElementById('verdictCard').classList.add('show'), 100);
+}
+
+/* ---------- main flow ---------- */
+let delibTimer = null;
+
+async function runTrial(){
+  const raw = document.getElementById('dilemmaInput').value.trim();
+  if(raw.length < 2){
+    const ta = document.getElementById('dilemmaInput');
+    ta.focus();
+    ta.style.borderBottomColor = 'var(--j-bestie)';
+    setTimeout(()=> ta.style.borderBottomColor = '', 1200);
+    return;
+  }
+
+  const btn = document.getElementById('gavelBtn');
+  btn.disabled = true;
+  btn.textContent = '庭审进行中…';
+
+  const analysis = analyzeDilemma(raw);
+  state.analysis = analysis;
+
+  // ---- 入庭过渡 ----
+  document.getElementById('input-section').classList.add('hidden');
+  const delib = document.getElementById('delib-section');
+  delib.classList.remove('hidden');
+  const sub = document.getElementById('delibSub');
+  const introMsgs = ['正在拆解案情…','识别案件类型与情绪信号…','传唤双方代表入庭…','陪审团就位…'];
+  let mi = 0;
+  sub.textContent = introMsgs[0];
+  if(delibTimer) clearInterval(delibTimer);
+  delibTimer = setInterval(()=>{
+    mi++;
+    if(mi >= introMsgs.length){ clearInterval(delibTimer); delibTimer=null; return; }
+    sub.classList.add('fade');
+    setTimeout(()=>{ sub.textContent = introMsgs[mi]; sub.classList.remove('fade'); }, 220);
+  }, 380);
+  setTimeout(()=> delib.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+
+  await new Promise(r => setTimeout(r, 1500));
+  if(delibTimer){ clearInterval(delibTimer); delibTimer=null; }
+  delib.classList.add('hidden');
+
+  // ---- 阶段 1：法庭辩论 ----
+  document.getElementById('debate-section').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('debate-section').scrollIntoView({behavior:'smooth', block:'start'}), 120);
+  const counselSummaries = await renderCounselAI(analysis);
+
+  // ---- 阶段 2：陪审团评议 ----
+  document.getElementById('jury-section').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('jury-section').scrollIntoView({behavior:'smooth', block:'start'}), 200);
+  const jurorResults = await renderJuryAI(analysis, counselSummaries);
+
+  // ---- 阶段 3：法官宣判 ----
+  document.getElementById('verdict-section').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('verdict-section').scrollIntoView({behavior:'smooth', block:'start'}), 200);
+  const rulingRaw = await streamJudge(analysis, counselSummaries, jurorResults);
+
+  // 归档本次庭审
+  saveArchive({
+    dilemma: analysis.rawText,
+    type: analysis.type,
+    caseNo: CURRENT_CASE_NO,
+    counselPro: counselSummaries.pro,
+    counselCon: counselSummaries.con,
+    jury: jurorResults.map(r => ({ id:r.id, name:r.name, lean:r.lean, full:r.full })),
+    judgeBody: document.getElementById('judgeBody').innerText,
+    ruling: rulingRaw,
+    rulingText: document.getElementById('judgeRuling').innerText,
+  });
+
+  btn.disabled = false;
+  btn.textContent = '开庭';
+}
+
+function reset(){
+  document.getElementById('dilemmaInput').value = '';
+  document.getElementById('input-section').classList.remove('hidden');
+  ['delib-section','debate-section','jury-section','verdict-section'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================================================
+   庭审记录册 · localStorage
+   ============================================================ */
+const ARCHIVE_KEY = 'trial-archive-v1';
+
+function loadArchive(){
+  try{ return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function persistArchive(arr){
+  try{ localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arr)); }
+  catch(e){ console.error('archive persist failed', e); }
+}
+function saveArchive(record){
+  const list = loadArchive();
+  record.id = 't' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+  record.savedAt = new Date().toISOString();
+  list.unshift(record);
+  // 上限 100 条，防爆
+  if(list.length > 100) list.length = 100;
+  persistArchive(list);
+  updateArchiveCount();
+}
+function deleteArchive(id){
+  const list = loadArchive().filter(r => r.id !== id);
+  persistArchive(list);
+  updateArchiveCount();
+  if(currentArchiveId === id){
+    currentArchiveId = null;
+    document.getElementById('archiveDetail').innerHTML = `
+      <div class="archive-empty">
+        <div class="archive-empty-mark">⚖</div>
+        <div class="archive-empty-text">选择左侧的庭审记录以查阅</div>
+      </div>`;
+  }
+  renderArchiveList();
+}
+async function clearArchive(){
+  const ok = await showModal({
+    title:'清空记录册',
+    text:'全部庭审记录将被永久清除，此操作不可恢复。',
+    confirmText:'清空',
+    mark:'🗑',
+    danger:true
+  });
+  if(!ok) return;
+  persistArchive([]);
+  currentArchiveId = null;
+  updateArchiveCount();
+  renderArchiveList();
+  document.getElementById('archiveDetail').innerHTML = `
+    <div class="archive-empty">
+      <div class="archive-empty-mark">⚖</div>
+      <div class="archive-empty-text">选择左侧的庭审记录以查阅</div>
+    </div>`;
+}
+function updateArchiveCount(){
+  const n = loadArchive().length;
+  const el = document.getElementById('archiveCount');
+  if(n > 0){
+    el.textContent = n;
+    el.hidden = false;
+  } else {
+    el.hidden = true;
+  }
+}
+
+let currentArchiveId = null;
+
+function renderArchiveList(){
+  const list = loadArchive();
+  const container = document.getElementById('archiveList');
+  const title = document.getElementById('archiveListTitle');
+  const clearBtn = document.getElementById('clearAllBtn');
+  title.textContent = list.length > 0 ? `共 ${list.length} 次庭审` : '尚无记录';
+  clearBtn.hidden = list.length === 0;
+
+  if(list.length === 0){
+    container.innerHTML = `
+      <div class="archive-list-empty">
+        <div class="archive-list-empty-mark">⚖</div>
+        <div>还没有庭审记录。<br>立案、庭审、归档后，<br>会出现在这里。</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(r => {
+    const isDo = (r.ruling||'').includes('准予');
+    const rulingClass = isDo ? 'archive-ruling-do' : 'archive-ruling-dont';
+    const rulingText = isDo ? '本院裁定：准予去做' : '本院裁定：不予去做';
+    const d = new Date(r.savedAt);
+    const dateStr = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const active = r.id === currentArchiveId ? ' active' : '';
+    const dilemmaEsc = (r.dilemma||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+    return `
+      <div class="archive-item${active}" data-id="${r.id}">
+        <span class="archive-item-del" data-del="${r.id}" title="删除">×</span>
+        <div class="archive-item-date">${dateStr}</div>
+        <div class="archive-item-dilemma">${dilemmaEsc}</div>
+        <div class="archive-item-ruling ${rulingClass}">
+          <span class="archive-ruling-dot"></span>${rulingText}
+        </div>
+      </div>`;
+  }).join('');
+
+  // bind
+  container.querySelectorAll('.archive-item').forEach(el => {
+    el.addEventListener('click', e => {
+      if(e.target.matches('[data-del]')) return;
+      const id = el.dataset.id;
+      currentArchiveId = id;
+      renderArchiveList();
+      renderArchiveDetail(id);
+    });
+  });
+  container.querySelectorAll('[data-del]').forEach(el => {
+    el.addEventListener('click', async e => {
+      e.stopPropagation();
+      e.preventDefault();
+      const id = el.dataset.del;
+      const ok = await showModal({
+        title:'删除庭审记录',
+        text:'此条记录将被永久移除，无法恢复。',
+        confirmText:'删除',
+        mark:'✕',
+        danger:true
+      });
+      if(ok) deleteArchive(id);
+    });
+  });
+}
+
+function renderArchiveDetail(id){
+  const record = loadArchive().find(r => r.id === id);
+  if(!record) return;
+  const detail = document.getElementById('archiveDetail');
+  const d = new Date(record.savedAt);
+  const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const isDo = (record.ruling||'').includes('准予');
+  const rulingClass = isDo ? 'do' : 'dont';
+  const rulingLabel = isDo ? '本院裁定：准予去做' : '本院裁定：不予去做';
+
+  const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  const paragraphs = s => (s||'').split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join('');
+  const jurorRow = j => {
+    const clean = (j.full||'').replace(/^\s*\[结论[：:]\s*(去做|不做)\s*\]\s*\n?/, '').trim();
+    return `
+      <div class="archive-juror">
+        <div class="archive-juror-head">
+          <span class="archive-juror-name">${esc(j.name||'')}</span>
+          <span class="archive-juror-lean ${j.lean==='去做'?'do':'dont'}">${j.lean==='去做'?'倾向去做':'倾向不做'}</span>
+        </div>
+        <div class="archive-juror-body">${paragraphs(clean)}</div>
+      </div>`;
+  };
+
+  detail.innerHTML = `
+    <div class="archive-case">
+      <div class="archive-case-meta">案号 ${esc(record.caseNo||'—')} · ${esc(TYPE_LABEL[record.type]||'人生岔路')} · ${dateStr}</div>
+      <div class="archive-case-dilemma">${esc(record.dilemma||'')}</div>
+      <span class="archive-case-ruling ${rulingClass}">${rulingLabel}</span>
+    </div>
+
+    <div class="archive-section-title">法庭辩论</div>
+    <div class="archive-debate">
+      <div class="archive-debate-col">
+        <div class="archive-debate-head pro">正方代表 · 逐梦人</div>
+        <div class="archive-debate-body">${paragraphs(record.counselPro)}</div>
+      </div>
+      <div class="archive-debate-col">
+        <div class="archive-debate-head con">反方代表 · 守成人</div>
+        <div class="archive-debate-body">${paragraphs(record.counselCon)}</div>
+      </div>
+    </div>
+
+    <div class="archive-section-title">陪审团评议</div>
+    <div class="archive-jurors">
+      ${(record.jury||[]).map(jurorRow).join('')}
+    </div>
+
+    <div class="archive-section-title">审判长裁定书</div>
+    <div class="archive-judge">${paragraphs(record.judgeBody)}</div>
+    <div class="archive-judge-ruling ${rulingClass}">${esc(record.rulingText||'')}</div>
+  `;
+
+  detail.scrollTop = 0;
+}
+
+function openArchive(){
+  document.getElementById('archive-section').classList.remove('hidden');
+  ['input-section','delib-section','debate-section','jury-section','verdict-section'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
+  currentArchiveId = null;
+  renderArchiveList();
+  document.getElementById('archiveDetail').innerHTML = `
+    <div class="archive-empty">
+      <div class="archive-empty-mark">⚖</div>
+      <div class="archive-empty-text">选择左侧的庭审记录以查阅</div>
+    </div>`;
+  setTimeout(()=> document.getElementById('archive-section').scrollIntoView({behavior:'smooth', block:'start'}), 50);
+}
+function backToHome(){
+  document.getElementById('archive-section').classList.add('hidden');
+  document.getElementById('input-section').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------- boot ---------- */
+initMast();
+updateArchiveCount();
+document.getElementById('gavelBtn').addEventListener('click', runTrial);
+document.getElementById('resetBtn').addEventListener('click', reset);
+document.getElementById('openArchive').addEventListener('click', openArchive);
+document.getElementById('backToHome').addEventListener('click', backToHome);
+document.getElementById('clearAllBtn').addEventListener('click', clearArchive);
+// Ctrl/Cmd + Enter in the textarea triggers trial
+document.getElementById('dilemmaInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && (e.ctrlKey || e.metaKey)){
+    e.preventDefault();
+    runTrial();
+  }
+});
+
+/* 统一确认弹窗 · 替代浏览器原生 confirm */
+function showModal(opts={}){
+  const {title='请确认', text='', confirmText='确认', cancelText='取消', mark='⚖', danger=false} = opts;
+  return new Promise(resolve => {
+    const mask  = document.getElementById('modalMask');
+    const t     = document.getElementById('modalTitle');
+    const x     = document.getElementById('modalText');
+    const ok    = document.getElementById('modalConfirm');
+    const cnl   = document.getElementById('modalCancel');
+    const m     = document.getElementById('modalMark');
+    t.textContent = title;
+    x.innerHTML   = text;
+    ok.textContent = confirmText;
+    cnl.textContent = cancelText;
+    m.textContent = mark;
+    ok.classList.toggle('danger', !!danger);
+    cnl.focus();
+    mask.classList.add('show');
+    mask.setAttribute('aria-hidden','false');
+
+    let done = false;
+    const close = (val) => {
+      if(done) return;
+      done = true;
+      mask.classList.remove('show');
+      mask.setAttribute('aria-hidden','true');
+      ok.onclick = cnl.onclick = mask.onclick = null;
+      document.removeEventListener('keydown', onKey);
+      resolve(val);
+    };
+    const onKey = (e) => {
+      if(e.key === 'Escape'){ e.preventDefault(); close(false); }
+      else if(e.key === 'Enter' && document.activeElement === ok){ e.preventDefault(); close(true); }
+    };
+    ok.onclick  = (e) => { e.stopPropagation(); close(true); };
+    cnl.onclick = (e) => { e.stopPropagation(); close(false); };
+    mask.onclick = (e) => { if(e.target === mask) close(false); };
+    document.addEventListener('keydown', onKey);
+  });
+}
+</script>
+
+<!-- 确认弹窗 -->
+<div class="modal-mask" id="modalMask" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-mark" id="modalMark">⚖</div>
+    <h3 class="modal-title" id="modalTitle">请确认</h3>
+    <p class="modal-text" id="modalText"></p>
+    <div class="modal-actions">
+      <button class="modal-btn" id="modalCancel" type="button">取消</button>
+      <button class="modal-btn primary" id="modalConfirm" type="button">确认</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
